@@ -1,4 +1,5 @@
 import { Shield, RefreshCcw, CheckCircle, Lock, Smile } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 export default function Inicio() {
 //   Cores: #1caee3 - claro claro - /cyan 500/
@@ -6,6 +7,7 @@ export default function Inicio() {
 
 // #23299e - escuro claro - 
 // #13076a - escuro escuro
+const navigate = useNavigate();
 
   return (
     <div className="bg-gray-900 text-gray-100 font-sans flex flex-col min-h-screen">
@@ -14,7 +16,7 @@ export default function Inicio() {
       <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="Logo" className="w-8 h-8" />
-          <a href="#"><span className="font-bold text-lg text-white">
+          <a  href="/"><span className="font-bold text-lg text-white">
             Opy<span className="text-cyan-500">Soft</span>
           </span></a>
         </div>
@@ -41,7 +43,7 @@ export default function Inicio() {
           <p className="text-gray-200 mb-8 text-2xl md:text-4xl font-bold leading-snug">
             Transforme sua empresa de manutenção de hardware com o OpySoft ERP. <br /><span className="text-cyan-500">Teste gratuito agora!</span>
           </p>
-          <button className="cursor-pointer bg-cyan-500 hover:bg-sky-700 text-white font-semibold px-9 py-5 rounded-lg shadow-md transition mb-4">
+          <button  onClick={() => navigate('/register')} className="cursor-pointer bg-cyan-500 hover:bg-sky-700 text-white font-semibold px-9 py-5 rounded-lg shadow-md transition mb-4">
             Fazer o Teste Gratuito
           </button>
           <p className="text-xs text-gray-400">
@@ -60,6 +62,9 @@ export default function Inicio() {
           <p className="text-gray-300 text-lg leading-relaxed">
             Apaixonados por tecnologia e especialistas em hardware, nossa equipe decidiu criar soluções que realmente funcionam. Ao longo de nossas carreiras, lidamos com sistemas ultrapassados e planilhas complexas no Excel, mostrando a necessidade de ferramentas modernas e eficientes. Quando surgiu a oportunidade de desenvolver nosso TCC, aproveitamos para criar um ERP pensado para resolver problemas reais, simplificar processos e otimizar o dia a dia das empresas que trabalham com hardware. Com o OpySoft ERP, nosso objetivo é transformar a forma como essas empresas gerenciam suas operações, tornando tudo mais ágil, seguro e confiável.
           </p>
+          <button  onClick={() => navigate('/sobreNos')} className="cursor-pointer bg-cyan-500 hover:bg-sky-700 text-white font-semibold px-9 py-5 rounded-lg shadow-md transition mb-4 mt-4">
+           Conheça Nossa Equipe
+          </button>
           <h3 className="text-3xl font-bold text-white mt-6">
             Opy<span className="text-cyan-500">Soft</span>
             <div className="h-1 w-24 bg-sky-700 mt-2 mx-auto"></div>

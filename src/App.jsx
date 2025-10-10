@@ -1,20 +1,19 @@
-import { useState } from 'react'
-import './App.css'
+// App.jsx
+import { Routes, Route } from 'react-router-dom';
+import Inicio from './inicio';
+import  SobreNos  from './SobreNos';
+import RegisterPage from './RegisterPage';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank"/>        
-      </div>
-
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Inicio />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/sobreNos" element={<SobreNos/>} />
+      {/* Você pode adicionar mais rotas aqui, como login, etc. */}
+    </Routes>
+  );
 }
 
-export default App
+export default App;

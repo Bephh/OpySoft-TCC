@@ -122,7 +122,7 @@ export default function RegisterCompanyPage() {
           {/* Botão de cadastro */}
           <button
             type="submit"
-            className="w-full bg-cyan-500 hover:bg-sky-700 text-white font-semibold py-3 rounded-md shadow transition"
+            className=" cursor-pointer w-full bg-cyan-500 hover:bg-sky-700 text-white font-semibold py-3 rounded-md shadow transition"
           >
             Cadastrar Empresa
           </button>
