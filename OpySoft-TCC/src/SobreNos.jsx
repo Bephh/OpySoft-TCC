@@ -6,23 +6,23 @@ export default function SobreNos() {
   const membros = [
     {
       nome: "Nicolas Galvão Bonfante",
-      foto: "/membros/nicolas.jpg", // Coloque suas imagens em public/membros/
+      foto: "/nicolas.jpg", // Coloque suas imagens em public/membros/
     },
     {
       nome: "Arthur Goes Francelino",
-      foto: "/membros/arthur.jpg",
+      foto: "/arthur.jpg",
     },
     {
       nome: "Gustavo Santos Pafume",
-      foto: "/membros/gustavo.jpg",
+      foto: "/gustavo.jpg",
     },
     {
       nome: "Guilherme Pereira",
-      foto: "/membros/guilherme.jpg",
+      foto: "/guilherme.jpg",
     },
     {
       nome: "Caio Drumond",
-      foto: "/membros/caio.jpg",
+      foto: "/caio.jpg",
     }
   ];
 

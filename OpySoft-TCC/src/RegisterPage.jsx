@@ -9,7 +9,7 @@ export default function RegisterCompanyPage() {
       <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="Logo" className="w-8 h-8" />
-          <a href="#">
+          <a href="/">
             <span className="font-bold text-lg text-white">
               Opy<span className="text-cyan-500">Soft</span>
             </span>
@@ -130,7 +130,7 @@ export default function RegisterCompanyPage() {
           {/* Link para login */}
           <p className="text-center text-sm mt-4 text-gray-400">
             Já tem uma conta?{' '}
-            <a href="/login" className="text-cyan-500 hover:text-sky-400 underline">
+            <a href='/login' onClick={() => navigate('/login')} className="text-cyan-500 hover:text-sky-400 underline"> <br />
               Faça login
             </a>
           </p>
