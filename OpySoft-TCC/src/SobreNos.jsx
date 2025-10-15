@@ -18,7 +18,7 @@ export default function SobreNos() {
     },
     {
       nome: "Guilherme Pereira",
-      foto: "/guilherme.jpg",
+      foto: "/Guilherme.jpg",
     },
     {
       nome: "Caio Drumond",
