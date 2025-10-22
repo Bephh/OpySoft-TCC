@@ -3,7 +3,7 @@ import { Building2, Mail, Lock, Phone, Landmark } from 'lucide-react';
 
 export default function LoginCompanyPage() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
 
       {/* Header */}
       <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">

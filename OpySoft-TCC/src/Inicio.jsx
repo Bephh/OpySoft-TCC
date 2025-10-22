@@ -146,9 +146,9 @@ const navigate = useNavigate();
             © {new Date().getFullYear()} OpySoft. Todos os direitos reservados.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-red-400 transition">Termos de Serviço</a>
-            <a href="#" className="hover:text-red-400 transition">Política de Privacidade</a>
-            <a href="#" className="hover:text-red-400 transition">Contato</a>
+            <a href="termos" className="hover:text-sky-700 transition">Termos de Serviço</a>
+            <a href="Privacidade" className="hover:text-sky-700 transition">Política de Privacidade</a>
+            <a href="#" className="hover:text-sky-700 transition">Contato</a>
           </div>
         </div>
       </footer>

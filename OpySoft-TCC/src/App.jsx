@@ -5,6 +5,8 @@ import  SobreNos  from './SobreNos';
 import RegisterPage from './RegisterPage';
 import './App.css';
 import Login from './Login';
+import Termo from './termos';
+import Privacidade from './Privacidade';
 
 
 function App() {
@@ -14,7 +16,9 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/sobreNos" element={<SobreNos/>} />
       <Route path="/login" element={<Login/>} />
-      {/* Você pode adicionar mais rotas aqui, como login, etc. */}
+      <Route path="/Termos" element={<Termo/>} />
+      <Route path="/Privacidade" element={<Privacidade/>} />
+    
     </Routes>
   );
 }
