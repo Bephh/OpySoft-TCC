@@ -1,7 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Building2, Mail, Lock, Phone, Landmark } from 'lucide-react';
-
+import { mask, unMask } from 'remask';
+ 
 export default function RegisterCompanyPage() {
+  const navigate = useNavigate();
+  const [cnpj, setCnpj] = React.useState('');
+  const [celular, setCelular] = React.useState('');
+
+
+  const handleCnpjChange = (e) => {
+    const onlyNumbers = unMask(e.target.value);
+    const masked = mask(onlyNumbers, ['99.999.999/9999-99']);
+    setCnpj(masked);
+  };
+  const handleCelularChange = (e) => {
+    const onlyNumbers = unMask(e.target.value);
+    const maskedCell = mask(onlyNumbers, ['(99) 99999-9999']);
+    setCelular(maskedCell);
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
 
@@ -47,12 +65,15 @@ export default function RegisterCompanyPage() {
             <div className="flex items-center bg-gray-700 rounded px-3 py-2">
               <Landmark className="text-cyan-500 mr-2" />
               <input
-                type="number"
+                type="text"
                 placeholder="00.000.000/0001-00"
                 className="bg-transparent w-full outline-none text-white"
+                value={cnpj}
+                onChange={handleCnpjChange}
               />
             </div>
           </div>
+
 
           {/* Razão Social */}
           <div>
@@ -86,9 +107,11 @@ export default function RegisterCompanyPage() {
             <div className="flex items-center bg-gray-700 rounded px-3 py-2">
               <Phone className="text-cyan-500 mr-2" />
               <input
-                type="tel"
+                type="text"
                 placeholder="(11) 91234-5678"
                 className="bg-transparent w-full outline-none text-white"
+                value={celular}
+                onChange={handleCelularChange}
               />
             </div>
           </div>

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Building2, Mail, Lock, Phone, Landmark } from 'lucide-react';
 
 export default function LoginCompanyPage() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
 
