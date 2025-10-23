@@ -280,7 +280,7 @@ export default function Montador() {
 
                 <div className="text-sm text-gray-400">Estimativa de consumo: {estimatedPower}W</div>
 
-                <button className="w-full bg-[#0ea5a4] text-white py-2 rounded cursor-pointer">Ir para checkout</button>
+                <button className="w-full bg-[#0ea5a4] text-white py-2 rounded cursor-pointer">Pagamento completo! (adicionar as finanças)</button>
               </div>
             </>
           )}
