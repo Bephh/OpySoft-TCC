@@ -1,6 +1,7 @@
 import React from "react";
 
 const DATA = {
+  // cpu temporarios para testes
   cpus: [
     { id: "cpu1", name: "Intel i5-12400F", socket: "LGA1700", price: 900, power: 65 },
     { id: "cpu2", name: "Intel i7-12700K", socket: "LGA1700", price: 1700, power: 125 },
