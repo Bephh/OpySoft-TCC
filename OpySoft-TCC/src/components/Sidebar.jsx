@@ -19,11 +19,11 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     { name: "Inventário", icon: <Box size={18} /> },
     { name: "Pedidos", icon: <ShoppingCart size={18} /> },
     { name: "Montador de PC", icon: <Cpu size={18} /> },
-    { name: "Produção", icon: <Settings size={18} /> },
-    { name: "Cadeia de Suprimentos", icon: <Truck size={18} /> },
+    // { name: "Produção", icon: <Settings size={18} /> },
+    // { name: "Cadeia de Suprimentos", icon: <Truck size={18} /> },
     { name: "Finanças", icon: <DollarSign size={18} /> },
-    { name: "Análise de IA", icon: <BarChart2 size={18} /> },
-    { name: "Relatórios", icon: <FileText size={18} /> },
+    // { name: "Análise de IA", icon: <BarChart2 size={18} /> },
+    // { name: "Relatórios", icon: <FileText size={18} /> },
     { name: "Planos", icon: <Layers size={18} /> },
   ];
 

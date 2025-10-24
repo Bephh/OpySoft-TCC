@@ -15,7 +15,7 @@ export default function Painel() {
           title="Receita Total"
           icon={<DollarSign className="text-gray-400" />}
           value="R$0,00"
-          subtitle="+12.5% do último mês"
+          subtitle="+0% do último mês"
         />
         <Card
           title="Novos Pedidos"

@@ -3,11 +3,18 @@ import React from "react";
 export default function Inventario() {
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-2">Inventário</h1>
-      <p className="text-gray-400 mb-6">Gerencie seu estoque de componentes.</p>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+        <h1 className="text-3xl font-bold mb-2">Inventário</h1>
+        <p className="text-gray-400 mb-6">Gerencie seu estoque de componentes.</p>
+        </div>
+      <button className="flex items-center gap-2 bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">+ Adicionar Item</button>
+      </div>
 
+    
       <section className="bg-[#0b1220] p-6 rounded-xl">
         <h2 className="text-lg font-semibold mb-4">Estoque de Componentes</h2>
+       
         <table className="w-full text-left text-gray-300">
           <thead className="text-gray-400 border-b border-gray-700">
             <tr>
