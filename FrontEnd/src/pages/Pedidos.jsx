@@ -173,7 +173,7 @@ export default function Pedidos() {
 
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-blue-600 px-4 py-2 rounded-xl font-semibold hover:bg-blue-700 transition duration-150 shadow-lg"
+          className="flex items-center gap-2 bg-blue-600 px-4 py-2 rounded-xl font-semibold hover:bg-blue-700 transition duration-150 shadow-lg cursor-pointer"
         >
           <Plus size={18} />
           Novo Pedido Manual
@@ -186,7 +186,7 @@ export default function Pedidos() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-3 -mb-px font-medium transition duration-150 ${tab === t
+            className={` cursor-pointer px-4 py-3 -mb-px font-medium transition duration-150 ${tab === t
               ? "border-b-2 border-blue-500 text-blue-400"
               : "text-gray-400 hover:text-white hover:bg-[#1e293b] rounded-t-md"
               }`}
@@ -249,14 +249,14 @@ export default function Pedidos() {
                       <td className="py-4 px-4 flex gap-1 rounded-r-lg" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => handleOpenModal(order)}
-                          className="p-2 rounded-full text-blue-400 hover:bg-blue-800/70 transition"
+                          className="p-2 rounded-full text-blue-400 hover:bg-blue-800/70 transition cursor-pointer"
                           title="Editar Pedido Completo"
                         >
                           <Edit size={18} />
                         </button>
                         <button
                           onClick={() => handleDeleteOrder(order.id)}
-                          className="p-2 rounded-full text-red-400 hover:bg-red-800/70 transition"
+                          className="p-2 rounded-full text-red-400 hover:bg-red-800/70 transition cursor-pointer"
                           title="Deletar Pedido"
                         >
                           <Trash2 size={18} />

@@ -458,14 +458,14 @@ export default function Montador() {
                     disabled={isSaving || !isReadyToOrder}
                     className={`w-full mt-6 py-3 rounded-xl font-bold transition 
                         ${isSaving || !isReadyToOrder ? 
-                            'bg-gray-500 cursor-not-allowed' : 'bg-[#0ea5a4] hover:bg-[#0c8a8a]'}`}
+                            'bg-gray-500 cursor-not-allowed' : 'bg-[#0ea5a4] hover:bg-[#0c8a8a] cursor-pointer'}`}
                 >
                     {isSaving ? 'Processando Transação...' : 'Criar Pedido da Montagem'}
                 </button>
                 <button 
                     onClick={clearSelection} 
                     disabled={isSaving}
-                    className="w-full mt-3 py-3 rounded-xl font-bold transition bg-gray-600 hover:bg-gray-700"
+                    className="w-full mt-3 py-3 rounded-xl font-bold transition bg-gray-600 hover:bg-gray-700 cursor-pointer"
                 >
                     Limpar Seleção
                 </button>
