@@ -33,7 +33,6 @@ export default function EditTransactionModal({ onClose, transactionToEdit }) {
                 setValor(formatToInput(selectedOrder.total));
             }
         } else {
-            // Não limpa ao deselecionar na edição, a menos que você queira
         }
     };
 
@@ -80,7 +79,7 @@ export default function EditTransactionModal({ onClose, transactionToEdit }) {
                         className="w-full p-2.5 bg-[#0f172a] rounded-lg border border-gray-700 focus:ring-blue-500 focus:border-blue-500"
                     >
                         <option value="">{loading ? 'Carregando pedidos...' : 'Selecionar um Pedido...'}</option>
-                        {ordersError && <option disabled className="text-red-400">🚨 {ordersError}</option>}
+                        {ordersError && <option disabled className="text-red-400"> {ordersError}</option>}
                         {!loading && !ordersError && orders.length === 0 && <option disabled>Nenhum pedido concluído encontrado</option>}
                         {orders.map((order) => (
                             <option key={order.id} value={order.id}>

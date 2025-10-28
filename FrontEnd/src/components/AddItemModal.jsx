@@ -27,7 +27,6 @@ export default function AddItemModal({ onClose, onSave }) {
         
         let finalValue;
         if (type === 'number') {
-            // Lógica para lidar com preços (ponto flutuante) vs. inteiros
             if (name === 'price') {
                 finalValue = parseFloat(value) || 0;
             } else {
@@ -55,7 +54,6 @@ export default function AddItemModal({ onClose, onSave }) {
             criticalStock: parseInt(formData.criticalStock, 10) || 0,
         };
         
-        // onSave deve ser uma função assíncrona que retorna uma Promise
         const savePromise = onSave(payload);
         
         if (savePromise && typeof savePromise.finally === 'function') {
@@ -64,8 +62,6 @@ export default function AddItemModal({ onClose, onSave }) {
                 onClose();
             });
         } else {
-             // Caso onSave não retorne Promise, fecha imediatamente após o evento de salvar
-             // (idealmente, onSave em Inventario.jsx deve retornar a Promise do Firebase)
              setIsSaving(false);
              onClose();
         }
@@ -101,7 +97,6 @@ export default function AddItemModal({ onClose, onSave }) {
                 
                 {/* CONTEÚDO ROLÁVEL */}
                 <div className="overflow-y-auto pr-2 custom-scrollbar">
-                    {/* ⭐️ CORRIGIDO: Adicionado id="add-form" para vincular ao botão de submissão no rodapé */}
                     <form id="add-form" onSubmit={handleSubmit} className="space-y-5">
                         
                         {/* Linha 1: Componente e SKU */}
@@ -229,7 +224,7 @@ export default function AddItemModal({ onClose, onSave }) {
                     </button>
                     <button
                         type="submit"
-                        form="add-form" // <-- CORRIGIDO: Aciona o formulário com o ID "add-form"
+                        form="add-form" 
                         disabled={isSaving}
                         className={`py-3 px-6 rounded-xl font-bold transition duration-150 flex items-center gap-2 ${
                             isSaving 

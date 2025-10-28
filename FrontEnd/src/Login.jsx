@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import axios from 'axios';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebase-config'; // CRÍTICO: Configuração do Firebase
+import { auth } from './firebase-config'; 
 
 export default function LoginCompanyPage() {
     const [email, setEmail] = useState('');
@@ -18,23 +18,20 @@ export default function LoginCompanyPage() {
         setLoading(true);
 
         try {
-            // 1. AUTENTICAÇÃO NO FIREBASE (CLIENT-SIDE)
+            // 1. AUTENTICAÇÃO NO FIREBASE
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             
             // 2. OBTÉM O TOKEN DE AUTORIZAÇÃO
             const idToken = await user.getIdToken();
             
-            // 3. CHAMADA AO BACKEND (NODE.JS) PARA VERIFICAÇÃO/PERFIL
-            // Alterado para '/api/profile'
+            // 3. CHAMADA AO BACKEND
             const response = await axios.get('/api/profile', {
                 headers: {
-                    // Envia o token para ser validado pelo authMiddleware
                     'Authorization': `Bearer ${idToken}` 
                 }
             });
             
-            // Se as etapas 1, 2 e 3 passarem:
             localStorage.setItem('firebaseIdToken', idToken);
             console.log("Login bem-sucedido! Perfil carregado:", response.data.profile);
             
@@ -62,7 +59,6 @@ export default function LoginCompanyPage() {
     return (
         <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
 
-            {/* Header ... (código omitido por ser estático) */}
             <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <img src="/logo.png" alt="Logo" className="w-8 h-8" />

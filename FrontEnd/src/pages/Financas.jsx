@@ -1,7 +1,4 @@
-// src/pages/Financas.jsx
-
 import React, { useState } from "react";
-// Importar os ícones do Lucide React
 import { DollarSign, TrendingDown, TrendingUp, Edit, Trash2 } from "lucide-react";
 import { useFinancas } from '../hooks/useFinancas';
 import AddTransactionModal from '../components/AddTransactionModal';
@@ -10,7 +7,6 @@ import { useAuth } from '../AuthContext';
 
 // Função de formatação para R$
 const formatarMoeda = (valor) => {
-  // Garante que o valor é numérico antes de formatar
   const numValor = parseFloat(valor) || 0;
   return numValor.toLocaleString('pt-BR', {
     style: 'currency',
@@ -18,7 +14,6 @@ const formatarMoeda = (valor) => {
   });
 };
 
-// Componente Card reutilizável
 const Card = ({ title, icon, value }) => (
   <div className="bg-[#1e293b] p-5 rounded-xl shadow-lg flex flex-col">
     <div className="flex justify-between items-center mb-4">
@@ -31,7 +26,6 @@ const Card = ({ title, icon, value }) => (
 
 
 export default function Financas() {
-  // O hook useFinancas já expõe as funções que precisamos
   const { transacoes, loading, erro, summary, adicionarTransacao, deletarTransacao, atualizarTransacao } = useFinancas();
   const { currentUser } = useAuth();
 
@@ -39,19 +33,17 @@ export default function Financas() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
 
-  // Função de Salvar (passada para o AddTransactionModal)
+  // Função de Salvar 
   const handleSaveTransaction = async (data) => {
     try {
       await adicionarTransacao(data);
       setShowAddModal(false);
     } catch (error) {
       console.error("Erro ao salvar transação:", error);
-      // Re-lança para o modal exibir
       throw new Error(error.message || "Erro desconhecido ao salvar.");
     }
   };
 
-  // REMOVIDA: A função handleUpdateTransaction foi removida pois o EditTransactionModal já usa atualizarTransacao via hook.
 
   // Função para abrir o modal de edição
   const handleEditClick = (transaction) => {
@@ -63,7 +55,6 @@ export default function Financas() {
   const handleDeleteClick = (id) => {
     if (window.confirm("Tem certeza que deseja deletar esta transação?")) {
       deletarTransacao(id).catch(err => {
-        // A mensagem de erro agora será mais clara com as correções aplicadas nos hooks.
         alert("Erro ao deletar: " + err.message);
       });
     }
@@ -83,15 +74,12 @@ export default function Financas() {
     );
   }
 
-  // Preparação de dados para gráfico e lista
   const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   const lucroPorMes = Array(12).fill(0);
   let transacoesRecentes = [];
 
   if (Array.isArray(transacoes)) {
-    // 1. Cálculo Lucro Líquido por Mês para o Gráfico
     transacoes.forEach(t => {
-      // Garante que 'data' é um Timestamp válido antes de tentar toDate()
       if (t.data && typeof t.data.toDate === 'function') {
         try {
           const mes = t.data.toDate().getMonth(); // 0-11
@@ -100,20 +88,18 @@ export default function Financas() {
             lucroPorMes[mes] += valor;
           }
         } catch (e) {
-          // Se a conversão falhar (muito raro com serverTimestamp)
           console.warn("Transação ignorada por erro de data (toDate):", t);
         }
       }
     });
 
-    // 2. Pega as 5 transações mais recentes (Lógica para evitar o erro de 'seconds')
     transacoesRecentes = transacoes
-      .filter(t => t.data && typeof t.data.seconds === 'number') // FILTRO CRÍTICO PARA EVITAR ERRO DE DATE
-      .sort((a, b) => (b.data.seconds || 0) - (a.data.seconds || 0)) // Ordena pela data (mais recente primeiro)
+      .filter(t => t.data && typeof t.data.seconds === 'number') 
+      .sort((a, b) => (b.data.seconds || 0) - (a.data.seconds || 0)) 
       .slice(0, 5);
   }
 
-  const maxAbsLucro = Math.max(...lucroPorMes.map(Math.abs), 1); // Maior valor absoluto (ou 1 se tudo for 0)
+  const maxAbsLucro = Math.max(...lucroPorMes.map(Math.abs), 1); 
   const maxYLabel = formatarMoeda(maxAbsLucro);
   const minYLabel = formatarMoeda(-maxAbsLucro);
 
@@ -170,7 +156,6 @@ export default function Financas() {
                       className={`w-3 sm:w-4 rounded-md transition-all duration-300 ${colorClass}`}
                       style={{
                         height: `${barHeightPercent}%`,
-                        // Posiciona a base no centro (50%) e move para cima/baixo
                         transform: `translateY(${isPositive ? '-50%' : '50%'}) scaleY(${isPositive ? 1 : -1})`,
                         position: 'absolute',
                         bottom: '50%',

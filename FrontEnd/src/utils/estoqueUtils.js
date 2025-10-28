@@ -2,10 +2,9 @@ import { db } from '../firebase-config';
 import { doc, getDoc, writeBatch } from 'firebase/firestore';
 
 /**
- * Atualiza o estoque para cada item de um pedido (incrementa ou decrementa).
- * @param {Array} items - Lista de itens do pedido (deve ter itemId/id e qtd).
- * @param {string} userId - UID do usuário logado.
- * @param {number} multiplier - -1 para descontar (Entregue), 1 para estornar (Cancelado/Deletado).
+ * @param {Array} items 
+ * @param {string} userId 
+ * @param {number} multiplier 
  */
 export const updateEstoqueFromPedido = async (items, userId, multiplier) => {
     if (!items || items.length === 0) return;
@@ -22,7 +21,6 @@ export const updateEstoqueFromPedido = async (items, userId, multiplier) => {
         const itemRef = doc(db, "inventario", userId, "itens", itemId);
         const changeAmount = quantidade * multiplier;
 
-        // Lê o estado atual do item
         const itemDoc = await getDoc(itemRef);
         if (itemDoc.exists()) {
             const currentQtd = itemDoc.data().qtdAtual || 0;

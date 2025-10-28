@@ -7,21 +7,16 @@ import {
   DollarSign,
   Layers,
   Wrench,
-  LogOut, // Ícone de Logout
+  LogOut, 
   X,
 } from "lucide-react";
-// 1. Importar o hook de autenticação
 import { useAuth } from "../AuthContext";
-// 2. Importar useNavigate para redirecionar após o logout
 import { useNavigate } from "react-router-dom";
 
 export default function Sidebar({ activeTab, setActiveTab, isOpen = true, onClose = () => {} }) {
   const navigate = useNavigate();
-  // 3. Obter dados e a função de logout do contexto
   const { userData, currentUser, logout } = useAuth();
 
-  // Dados a serem exibidos no perfil:
-  // Usa o 'nome_empresa' se existir, senão usa o email do Firebase
   const profileName = userData?.nome_empresa || currentUser?.email || 'N/A';
   const profileEmail = currentUser?.email || 'N/A';
   const initialLetter = profileName ? profileName[0].toUpperCase() : 'N';
@@ -29,7 +24,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen = true, onClos
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login'); // Redireciona para a tela de login
+      navigate('/login'); 
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       alert("Falha ao sair. Tente novamente.");
@@ -46,7 +41,6 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen = true, onClos
   ];
 
   return (
-    // Em mobile o sidebar funciona como um drawer controlado por transform (isOpen).
     <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform bg-[#0b1220] flex flex-col justify-between ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0`}>
       <div>
         <div className="p-6 flex items-center gap-2 relative">

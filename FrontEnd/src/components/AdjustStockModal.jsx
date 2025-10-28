@@ -21,7 +21,6 @@ export default function AdjustStockModal({ onClose, itemToEdit, onUpdate }) {
     });
     const [isSaving, setIsSaving] = useState(false);
 
-    // Popula o formulário quando o itemToEdit muda
     useEffect(() => {
         if (itemToEdit) {
             setFormData({
@@ -75,7 +74,6 @@ export default function AdjustStockModal({ onClose, itemToEdit, onUpdate }) {
             criticalStock: parseInt(formData.criticalStock, 10) || 0,
         };
 
-        // onUpdate deve ser uma função assíncrona que retorna uma Promise
         const updatePromise = onUpdate(itemToEdit.id, payload);
         
         if (updatePromise && typeof updatePromise.finally === 'function') {
@@ -84,7 +82,6 @@ export default function AdjustStockModal({ onClose, itemToEdit, onUpdate }) {
                 onClose();
             });
         } else {
-            // Fallback caso onUpdate não retorne Promise
             setIsSaving(false);
             onClose();
         }
@@ -120,7 +117,6 @@ export default function AdjustStockModal({ onClose, itemToEdit, onUpdate }) {
                 
                 {/* CONTEÚDO ROLÁVEL */}
                 <div className="overflow-y-auto pr-2 custom-scrollbar">
-                    {/* ⭐️ CORRIGIDO: Adicionado id="adjust-form" para vincular ao botão de submissão no rodapé */}
                     <form id="adjust-form" onSubmit={handleSubmit} className="space-y-5">
                         
                         {/* Linha 1: Componente e SKU (apenas leitura para SKU e Categoria, geralmente não se muda em edição simples) */}
@@ -235,7 +231,7 @@ export default function AdjustStockModal({ onClose, itemToEdit, onUpdate }) {
                     </button>
                     <button
                         type="submit"
-                        form="adjust-form" // <-- CORRIGIDO: Aciona o formulário com o ID "adjust-form"
+                        form="adjust-form"
                         disabled={isSaving}
                         className={`py-3 px-6 rounded-xl font-bold transition duration-150 flex items-center gap-2 ${
                             isSaving 

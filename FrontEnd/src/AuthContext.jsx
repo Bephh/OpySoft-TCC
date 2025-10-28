@@ -1,41 +1,30 @@
-// src/AuthContext.jsx
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
-// 1. Importar funções de atualização do Firebase
 import { onAuthStateChanged, signOut, updateProfile } from 'firebase/auth'; 
-// 2. Importar funções de manipulação do Firestore
 import { doc, getDoc, updateDoc } from 'firebase/firestore'; 
-// 3. Importação do seu arquivo de configuração do Firebase
-import { auth, db } from './firebase-config'; // Mantenho o nome que você usou na importação
+import { auth, db } from './firebase-config'; 
 
-// Cria o contexto
 const AuthContext = createContext();
 
-// Hook customizado para usar o contexto
 export const useAuth = () => {
     return useContext(AuthContext);
 };
 
-// Provedor de Contexto (Wrapper)
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
-    const [userData, setUserData] = useState(null); // Dados da empresa (Firestore)
+    const [userData, setUserData] = useState(null); 
     const [loading, setLoading] = useState(true);
 
     // Função para atualizar os dados do usuário
-    // Recebe o novo nome de exibição e a URL da foto
     const updateProfileData = async ({ displayName, photoURL }) => {
         if (!currentUser) throw new Error("Usuário não logado.");
 
-        // Objeto de atualizações para o Firebase Auth
         const authUpdates = {
             displayName: displayName,
             photoURL: photoURL,
         };
         
-        // Objeto de atualizações para o Firestore (Coleção 'empresas')
         const firestoreUpdates = {
-            nome_empresa: displayName, // Assumindo que você quer sincronizar
+            nome_empresa: displayName, 
             photoURL: photoURL,
         };
 
@@ -43,19 +32,18 @@ export const AuthProvider = ({ children }) => {
             // 1. Atualiza o perfil no Firebase Authentication
             await updateProfile(currentUser, authUpdates);
 
-            // 2. Atualiza os dados no Firestore na coleção 'empresas'
+            // 2. Atualiza os dados no Firestore
             const docRef = doc(db, 'empresas', currentUser.uid);
             await updateDoc(docRef, firestoreUpdates);
 
-            // 3. Atualiza os estados locais (currentUser e userData) para refletir na UI imediatamente
+            // 3. Atualiza os estados locais 
             
-            // Atualiza currentUser com os novos dados do Firebase Auth
             setCurrentUser(prevUser => ({
                 ...prevUser,
                 ...authUpdates,
             }));
 
-            // Atualiza userData com os novos dados do Firestore
+            // Atualiza userData 
             setUserData(prevData => ({
                 ...prevData,
                 ...firestoreUpdates,
@@ -63,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
         } catch (error) {
             console.error("Falha ao atualizar perfil e/ou dados da empresa:", error);
-            throw error; // Re-lança o erro para ser tratado no modal
+            throw error; 
         }
     };
 
@@ -74,7 +62,7 @@ export const AuthProvider = ({ children }) => {
             setCurrentUser(user);
             
             if (user) {
-                // Se o usuário está logado, busca os dados no Firestore (Coleção 'empresas')
+                // Se o usuário está logado busca os dados no Firestore 
                 try {
                     const docRef = doc(db, 'empresas', user.uid);
                     const docSnap = await getDoc(docRef);
@@ -83,10 +71,9 @@ export const AuthProvider = ({ children }) => {
                         const companyData = docSnap.data();
                         setUserData(companyData);
                         
-                        // Garante que o estado currentUser também inclua dados do Auth 
-                        // (útil para consistência, embora user do onAuthStateChanged já seja a fonte primária)
+                       
                         setCurrentUser(prevUser => ({
-                            ...user, // Usa o objeto user mais recente
+                            ...user, 
                             displayName: user.displayName,
                             photoURL: user.photoURL,
                         }));
@@ -94,14 +81,13 @@ export const AuthProvider = ({ children }) => {
                     } else {
                         console.warn("Dados da empresa não encontrados no Firestore. Pode ser um usuário recém-criado.");
                         setUserData(null);
-                        // O currentUser permanece o objeto do Auth
                     }
                 } catch (error) {
                     console.error("Erro ao buscar dados do usuário:", error);
                     setUserData(null);
                 }
             } else {
-                setUserData(null); // Limpa os dados se deslogado
+                setUserData(null); 
             }
 
             setLoading(false);
@@ -117,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         currentUser,
-        userData, // Contém o nome_empresa e outros dados da empresa
+        userData, 
         loading,
         logout,
         updateProfileData, 

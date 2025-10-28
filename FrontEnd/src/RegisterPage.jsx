@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Building2, Mail, Lock, Phone, Landmark } from 'lucide-react';
 import { mask, unMask } from 'remask';
-
-// Importar Authentication e Firestore do seu config
 import { auth, db } from './firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -25,7 +23,7 @@ export default function RegisterCompanyPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // --- FUNÇÕES DE MÁSCARA E MANIPULAÇÃO DE ESTADO ---
+    //FUNÇÕES DE MÁSCARA E MANIPULAÇÃO DE ESTADO
 
     const handleCnpjChange = (e) => {
         const onlyNumbers = unMask(e.target.value);
@@ -61,7 +59,7 @@ export default function RegisterCompanyPage() {
         setIsTermsAccepted(!isTermsAccepted);
     };
 
-    // --- FUNÇÃO DE SUBMISSÃO ---
+    //FUNÇÃO DE SUBMISSÃO
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -88,11 +86,10 @@ export default function RegisterCompanyPage() {
             );
             const uid = userCredential.user.uid;
 
-            // Remove a máscara e sanitiza os dados antes de salvar no banco
             const cnpj_unmasked_sanitized = unMask(formData.cnpj).replace(/\D/g, '');
             const telefone_unmasked_sanitized = unMask(formData.telefone).replace(/\D/g, '');
 
-            // 2. SALVAR DADOS DA EMPRESA (FIRESTORE) - Coleção 'empresas'
+            // 2. SALVAR DADOS DA EMPRESA (FIRESTORE)'
             const empresaRef = doc(db, "empresas", uid);
 
             await setDoc(empresaRef, {
@@ -105,7 +102,7 @@ export default function RegisterCompanyPage() {
                 data_cadastro: serverTimestamp(),
             });
 
-            // 3. SALVAR DOCUMENTO DE PERFIL (FIRESTORE) - Coleção 'users'
+            // 3. SALVAR DOCUMENTO DE PERFIL (FIRESTORE)
             const userProfileRef = doc(db, "users", uid);
             await setDoc(userProfileRef, {
                 uid: uid,
