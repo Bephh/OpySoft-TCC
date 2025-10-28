@@ -12,7 +12,40 @@ const USER_PROFILE_COLLECTION = "users";
 const EMPRESA_COLLECTION = "empresas"; 
 
 // --------------------------------------------------------------------
-// 1. ROTA DE CADASTRO (POST /api/register)
+// 1. ROTA DE HOMEPAGE (GET /homepage) - Rota pública
+// --------------------------------------------------------------------
+router.get("/homepage", async (req, res) => {
+    try {
+        // Simulação de dados da homepage (pode ser expandido com dados reais do Firestore)
+        const homepageData = {
+            title: "OpySoft ERP - Solução Completa para sua Empresa",
+            subtitle: "Gerencie Inventário, Pedidos e Finanças de forma simples e eficiente.",
+            features: [
+                { name: "Inventário Inteligente", description: "Controle de estoque em tempo real." },
+                { name: "Gestão de Pedidos", description: "Acompanhe suas vendas do início ao fim." },
+                { name: "Análise Financeira", description: "Visão clara das suas finanças." },
+            ],
+            team: [
+                { name: "Arthur", role: "Desenvolvedor Front-end" },
+                { name: "Guilherme", role: "Desenvolvedor Back-end" },
+            ],
+            // Adicione mais dados conforme necessário para a homepage
+        };
+
+        return res.status(200).send({
+            message: "Dados da homepage carregados com sucesso.",
+            data: homepageData,
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar dados da homepage:", error);
+        return res.status(500).send({ error: "Erro interno ao carregar a homepage." });
+    }
+});
+
+
+// --------------------------------------------------------------------
+// 2. ROTA DE CADASTRO (POST /api/register)
 // --------------------------------------------------------------------
 router.post("/register", async (req, res) => {
     const data = req.body;
@@ -69,7 +102,7 @@ router.post("/register", async (req, res) => {
 
 
 // --------------------------------------------------------------------
-// 2. ROTA DE PERFIL (GET /api/profile)
+// 3. ROTA DE PERFIL (GET /api/profile)
 // --------------------------------------------------------------------
 
 router.get("/profile", async (req, res) => {
@@ -104,7 +137,7 @@ router.get("/profile", async (req, res) => {
 
 
 // --------------------------------------------------------------------
-// 3. ROTA PROTEGIDA DE DADOS (POST /api/itens)
+// 4. ROTA PROTEGIDA DE DADOS (POST /api/itens)
 // --------------------------------------------------------------------
 
 router.post("/itens", async (req, res) => {

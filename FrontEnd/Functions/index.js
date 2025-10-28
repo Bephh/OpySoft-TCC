@@ -27,11 +27,15 @@ app.use(express.json());
 // ---------------------------
 
 // --- Roteamento e Middleware ---
-// Aplica o middleware de autenticação a TODAS as rotas que começam com /api
-app.use("/api", isAuthenticated); 
 
-// Todas as rotas de API definidas em routes.js
+// Rotas Públicas (sem autenticação)
+// A rota da homepage deve ser acessada publicamente.
+// Montamos o roteador aqui para que as rotas públicas fiquem acessíveis antes do middleware.
 app.use("/api", routes);
+
+// Aplica o middleware de autenticação a TODAS as rotas que começam com /api, 
+// exceto as que já foram definidas e são públicas (como a /homepage).
+app.use("/api", isAuthenticated);
 
 // -------------------------------
 
