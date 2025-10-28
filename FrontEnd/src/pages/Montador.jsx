@@ -283,18 +283,18 @@ export default function Montador() {
     };
 
     return (
-        <div className="flex bg-[#0b1220] text-white min-h-screen">
-            <main className="flex-1 p-8 overflow-y-auto">
+        <div className="flex flex-col md:flex-row bg-[#0b1220] text-white min-h-screen">
+            <main className="flex-1 w-full p-6 md:p-8 overflow-y-auto">
                 <h1 className="text-4xl font-extrabold mb-8 text-blue-400">Montador de PC Profissional</h1>
                 
                 <div className="bg-[#1e293b] p-6 rounded-xl shadow-xl space-y-4">
                     <h2 className="text-2xl font-semibold border-b border-gray-700 pb-3">Selecione os Componentes</h2>
 
                     <Field label={LABELS.cpu}>
-                        <select 
-                            value={sel.cpu?.id || ''} 
+                        <select
+                            value={sel.cpu?.id || ''}
                             onChange={(e) => handleSelect('cpu', e.target.value)}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64"
                         >
                             <option value="">Selecione um CPU</option>
                             {DATA.cpu.map(item => (
@@ -306,11 +306,11 @@ export default function Montador() {
                     </Field>
 
                     <Field label={LABELS.mobo} isCompatible={!sel.mobo || checkCompatibility(sel.mobo)}>
-                        <select 
-                            value={sel.mobo?.id || ''} 
+                        <select
+                            value={sel.mobo?.id || ''}
                             onChange={(e) => handleSelect('mobo', e.target.value)}
                             disabled={!sel.cpu}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64 disabled:opacity-50"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64 disabled:opacity-50"
                         >
                             <option value="">Selecione uma Placa-Mãe</option>
                             {DATA.motherboards
@@ -328,7 +328,7 @@ export default function Montador() {
                             value={sel.ram?.id || ''} 
                             onChange={(e) => handleSelect('ram', e.target.value)}
                             disabled={!sel.mobo}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64 disabled:opacity-50"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64 disabled:opacity-50"
                         >
                             <option value="">Selecione a Memória RAM</option>
                             {DATA.rams
@@ -345,7 +345,7 @@ export default function Montador() {
                         <select 
                             value={sel.gpu?.id || ''} 
                             onChange={(e) => handleSelect('gpu', e.target.value)}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64"
                         >
                             <option value="">Selecione a GPU</option>
                             {DATA.gpus.map(item => (
@@ -360,7 +360,7 @@ export default function Montador() {
                         <select 
                             value={sel.cooler?.id || ''} 
                             onChange={(e) => handleSelect('cooler', e.target.value)}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64"
                         >
                             <option value="">Selecione o Cooler</option>
                             {DATA.coolers.map(item => (
@@ -375,7 +375,7 @@ export default function Montador() {
                         <select 
                             value={sel.storage?.id || ''} 
                             onChange={(e) => handleSelect('storage', e.target.value)}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64"
                         >
                             <option value="">Selecione o Armazenamento</option>
                             {DATA.storages.map(item => (
@@ -390,7 +390,7 @@ export default function Montador() {
                         <select 
                             value={sel.psu?.id || ''} 
                             onChange={(e) => handleSelect('psu', e.target.value)}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64"
                         >
                             <option value="">Selecione a Fonte</option>
                             {DATA.psus
@@ -407,7 +407,7 @@ export default function Montador() {
                         <select 
                             value={sel.case?.id || ''} 
                             onChange={(e) => handleSelect('case', e.target.value)}
-                            className="bg-[#0f172a] p-2 rounded text-sm w-64"
+                            className="bg-[#0f172a] p-2 rounded text-sm w-full sm:w-64"
                         >
                             <option value="">Selecione o Gabinete</option>
                             {DATA.cases.map(item => (

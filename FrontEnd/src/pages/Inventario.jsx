@@ -110,25 +110,27 @@ export default function Inventario() {
   }
 
   return (
-    <div className="p-8 bg-[#0b1220] min-h-screen text-white overflow-y-auto custom-scrollbar">
-      <header className="flex justify-between items-center mb-10">
+    <div className="p-6 sm:p-8 bg-[#0b1220] min-h-screen text-white overflow-y-auto custom-scrollbar">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold text-blue-400">Inventário</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-400">Inventário</h1>
           <p className="text-gray-400 mt-1">Gerencie seu estoque de componentes. Os alertas são definidos por item.</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-150 shadow-lg shadow-blue-500/30"
+          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-150 shadow-lg shadow-blue-500/30 w-full sm:w-auto"
+          aria-label="Adicionar item ao inventário"
         >
-          <Plus size={20} />
-          Adicionar Item
+          <Plus size={18} />
+          <span className="hidden sm:inline">Adicionar Item</span>
+          <span className="sm:hidden">Item</span>
         </button>
       </header>
 
-      <div className="bg-[#1e293b] p-6 rounded-xl shadow-2xl">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-200">Estoque de Componentes</h2>
+      <div className="bg-[#1e293b] p-4 sm:p-6 rounded-xl shadow-2xl">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-200">Estoque de Componentes</h2>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full divide-y divide-gray-700 table-auto">
             <thead>
               <tr className="text-gray-400 text-sm uppercase tracking-wider">
@@ -174,6 +176,7 @@ export default function Inventario() {
                             onClick={() => handleEditClick(item)}
                             title="Editar Item"
                             className="text-blue-400 hover:text-blue-300 p-1 rounded-full hover:bg-gray-700 transition"
+                            aria-label={`Editar ${item.component}`}
                           >
                             <Edit size={18} />
                           </button>
@@ -181,6 +184,7 @@ export default function Inventario() {
                             onClick={() => onDeleteItem(item.id)}
                             title="Deletar Item"
                             className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-gray-700 transition"
+                            aria-label={`Deletar ${item.component}`}
                           >
                             <Trash2 size={18} />
                           </button>
@@ -192,6 +196,49 @@ export default function Inventario() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile: cards view */}
+        <div className="md:hidden space-y-4">
+          {inventory.length === 0 ? (
+            <div className="text-center py-6 text-gray-500">Nenhum componente cadastrado.</div>
+          ) : (
+            inventory.map((item) => {
+              const { label, className } = getStatusStyle(
+                item.quantity,
+                item.minStock,
+                item.criticalStock
+              );
+
+              return (
+                <div key={item.id} className="bg-[#0f1724] p-4 rounded-lg shadow-sm border border-gray-800">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-gray-100 truncate">{item.component}</h3>
+                        <span className={`text-xs font-semibold ${className.replace('/20','/30')}`}></span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">SKU: {item.sku || '-'}</p>
+                      <p className="text-sm text-green-400 font-semibold mt-2">{formatBRL(item.price)}</p>
+                      <p className="text-xs text-gray-300 mt-1">Qtde: <span className="font-medium text-gray-100">{item.quantity}</span></p>
+                      {item.supplier && <p className="text-xs text-gray-400 mt-1">Fornecedor: {item.supplier}</p>}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${className}`}>{label}</span>
+                      <div className="flex gap-2">
+                        <button onClick={() => handleEditClick(item)} className="text-blue-400 hover:text-blue-300 p-2 rounded-md bg-gray-800/30" aria-label={`Editar ${item.component}`}>
+                          <Edit size={16} />
+                        </button>
+                        <button onClick={() => onDeleteItem(item.id)} className="text-red-400 hover:text-red-300 p-2 rounded-md bg-gray-800/30" aria-label={`Deletar ${item.component}`}>
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

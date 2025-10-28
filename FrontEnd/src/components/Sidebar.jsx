@@ -8,13 +8,14 @@ import {
   Layers,
   Wrench,
   LogOut, // Ícone de Logout
+  X,
 } from "lucide-react";
 // 1. Importar o hook de autenticação
 import { useAuth } from "../AuthContext";
 // 2. Importar useNavigate para redirecionar após o logout
 import { useNavigate } from "react-router-dom";
 
-export default function Sidebar({ activeTab, setActiveTab }) {
+export default function Sidebar({ activeTab, setActiveTab, isOpen = true, onClose = () => {} }) {
   const navigate = useNavigate();
   // 3. Obter dados e a função de logout do contexto
   const { userData, currentUser, logout } = useAuth();
@@ -45,13 +46,22 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   ];
 
   return (
-    <aside className="w-64 bg-[#0b1220] flex flex-col justify-between">
+    // Em mobile o sidebar funciona como um drawer controlado por transform (isOpen).
+    <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform bg-[#0b1220] flex flex-col justify-between ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0`}>
       <div>
-        <div className="p-6 flex items-center gap-2">
+        <div className="p-6 flex items-center gap-2 relative">
           <div className="bg-blue-600 p-2 rounded">
             <Wrench className="text-white w-5 h-5 cursor-pointer" />
           </div>
           <h1 className="text-xl font-bold">OpySoft</h1>
+          {/* Botão de fechar apenas em telas pequenas (visível quando o drawer estiver aberto) */}
+          <button
+            onClick={onClose}
+            className="md:hidden absolute right-3 top-3 text-gray-300 p-1"
+            aria-label="Fechar menu"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="px-4 space-y-2 text-gray-300">

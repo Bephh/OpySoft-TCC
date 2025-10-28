@@ -120,21 +120,22 @@ export default function Financas() {
   return (
     <div className="p-6 bg-[#0f172a] text-white min-h-screen">
       {/* Cabeçalho */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2">Gestão Financeira</h1>
           <p className="text-gray-400">Acompanhe receitas, despesas e lucratividade.</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto"
+          aria-label="Adicionar transação"
         >
           + Adicionar Transação
         </button>
       </div>
 
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <Card title="Receita Total" icon={<TrendingUp className="text-green-500" />} value={formatarMoeda(summary.receitaTotal)} />
         <Card title="Despesas Totais" icon={<TrendingDown className="text-red-500" />} value={formatarMoeda(summary.despesaTotal)} />
         <Card title="Lucro Líquido" icon={<DollarSign className={summary.lucroLiquido >= 0 ? 'text-green-500' : 'text-red-500'} />} value={formatarMoeda(summary.lucroLiquido)} />
@@ -145,7 +146,7 @@ export default function Financas() {
         {/* Gráfico de Tendência */}
         <div className="lg:col-span-2 bg-[#1e293b] p-6 rounded-xl shadow-lg">
           <h2 className="text-lg font-semibold mb-4">Tendência de Lucro Líquido (Mês)</h2>
-          <div className="h-64 flex flex-col justify-end relative pt-6 pb-8">
+          <div className="h-56 sm:h-64 lg:h-72 flex flex-col justify-end relative pt-6 pb-8">
 
             {/* Labels Y e Linha Zero */}
             <span className="absolute left-0 top-0 text-xs text-gray-400">{maxYLabel}</span>
@@ -154,7 +155,7 @@ export default function Financas() {
             <div className="absolute left-10 right-0 h-px bg-gray-600 top-1/2"></div>
 
             {/* Container das Barras */}
-            <div className="flex h-full items-center justify-around ml-10">
+            <div className="flex h-full items-center justify-around ml-12 sm:ml-10 px-2">
               {lucroPorMes.map((lucro, index) => {
                 const percent = (Math.abs(lucro) / maxAbsLucro);
                 const barHeightPercent = Math.min(percent * 45, 45);
@@ -166,7 +167,7 @@ export default function Financas() {
                   <div key={meses[index]} className="flex flex-col items-center h-full w-full relative group">
                     {/* Barra (Positiva ou Negativa) */}
                     <div
-                      className={`w-4 rounded-md transition-all duration-300 ${colorClass}`}
+                      className={`w-3 sm:w-4 rounded-md transition-all duration-300 ${colorClass}`}
                       style={{
                         height: `${barHeightPercent}%`,
                         // Posiciona a base no centro (50%) e move para cima/baixo
@@ -196,20 +197,20 @@ export default function Financas() {
           <ul className="space-y-3">
             {transacoesRecentes.length > 0 ? (
               transacoesRecentes.map((t) => (
-                <li key={t.id} className="flex justify-between items-center text-sm border-b border-gray-700 pb-2 last:border-b-0">
+                <li key={t.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm border-b border-gray-700 pb-2 last:border-b-0">
                   <div className="flex-1 truncate pr-2">
                     <span className="block">{t.descricao || 'Transação'}</span>
                     {/* Renderiza a data se for válida */}
-                    {t.data && t.data.toDate && <span className="text-xs text-gray-400">{t.data.toDate().toLocaleDateString('pt-BR')}</span>}
+                    {t.data && t.data.toDate && <span className="text-xs text-gray-400 block sm:inline">{t.data.toDate().toLocaleDateString('pt-BR')}</span>}
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 mt-2 sm:mt-0">
                     <span className={`font-medium ${t.tipo === 'Receita' ? 'text-green-400' : 'text-red-400'}`}>
                       {formatarMoeda(t.valor)}
                     </span>
-                    <button onClick={() => handleEditClick(t)} className="text-blue-400 hover:text-blue-300 transition" title="Editar">
+                    <button onClick={() => handleEditClick(t)} className="text-blue-400 hover:text-blue-300 transition p-1" title="Editar" aria-label={`Editar ${t.descricao || 'transação'}`}>
                       <Edit size={16} />
                     </button>
-                    <button onClick={() => handleDeleteClick(t.id)} className="text-red-400 hover:text-red-300 transition" title="Deletar">
+                    <button onClick={() => handleDeleteClick(t.id)} className="text-red-400 hover:text-red-300 transition p-1" title="Deletar" aria-label={`Deletar ${t.descricao || 'transação'}`}>
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -222,7 +223,7 @@ export default function Financas() {
         </div>
       </div>
 
-      {/* Modal de Adicionar Transação */}
+      {/*Adicionar Transação */}
       {showAddModal && (
         <AddTransactionModal
           onClose={() => setShowAddModal(false)}
@@ -230,7 +231,7 @@ export default function Financas() {
         />
       )}
 
-      {/* Modal de Editar Transação */}
+      {/*Editar Transação */}
       {showEditModal && transactionToEdit && (
         <EditTransactionModal
           onClose={() => {

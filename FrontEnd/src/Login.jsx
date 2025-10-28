@@ -60,9 +60,25 @@ export default function LoginCompanyPage() {
 
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center px-4">
+        <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
 
             {/* Header ... (código omitido por ser estático) */}
+            <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+                    <a href="/">
+                        <span className="font-bold text-lg text-white">
+                            Opy<span className="text-cyan-500">Soft</span>
+                        </span>
+                    </a>
+                </div>
+                <nav className="hidden md:flex gap-6 text-white">
+                    <a href="/" className="hover:text-sky-700 transition">Home</a>
+                    <a href="/#sobre" className="hover:text-sky-700 transition">Sobre</a>
+                    <a href="/#beneficios" className="hover:text-sky-700 transition">Benefícios</a>
+                    <a href="/#contato" className="hover:text-sky-700 transition">Contato</a>
+                </nav>
+            </header>
 
             {/* Formulário de Login */}
             <div className="bg-gray-800 bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-2xl mt-24">

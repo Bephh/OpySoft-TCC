@@ -27,7 +27,7 @@ export default function SobreNos() {
   ];
 
   return (
-    <div className="bg-gray-900 text-gray-100 font-sans min-h-screen pt-24 px-6">
+    <div className="bg-gray-900 text-gray-100 font-sans min-h-screen pt-24 px-0 md:px-6 pb-20">
       {/* Header */}
       <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -61,33 +61,37 @@ export default function SobreNos() {
       </section>
 
       {/* Galeria de Membros */}
-      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
-  {membros.map((membro, index) => (
-    <div key={index} className="text-center">
-      <div className="w-full aspect-[3/4] overflow-hidden rounded-lg shadow-lg border-2 border-cyan-500">
-        <img
-          src={membro.foto}
-          alt={membro.nome}
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <p className="text-lg font-semibold text-white mt-3">{membro.nome}</p>
-    </div>
-  ))}
-</section>
+      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 px-4 sm:px-6 max-w-7xl mx-auto">
+        {membros.map((membro, index) => (
+          <div key={index} className="text-center">
+            <div className="relative w-full aspect-[3/4] rounded-lg shadow-lg bg-[#0b1220] border border-cyan-500/50 overflow-hidden">
+              <img
+                src={membro.foto}
+                alt={membro.nome}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <p className="text-lg font-semibold text-white mt-3">{membro.nome}</p>
+          </div>
+        ))}
+      </section>
 
 
       {/* Footer */}
-      <footer className="bg-gray-950 text-gray-400 py-6 mt-16">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm">
-            © {new Date().getFullYear()} OpySoft. Todos os direitos reservados.
-          </p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-red-400 transition">Termos de Serviço</a>
-            <a href="#" className="hover:text-red-400 transition">Política de Privacidade</a>
-            <a href="#" className="hover:text-red-400 transition">Contato</a>
-          </div>
+      <footer id="contato" className="fixed bottom-0 w-full bg-[#0b1220] border-t border-gray-800">
+        <div className="max-w-7xl mx-auto p-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-gray-400">
+          <p>© {new Date().getFullYear()} OpySoft. Todos os direitos reservados.</p>
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <a href="/Termos" className="hover:text-blue-400 transition">
+              Termos de Serviço
+            </a>
+            <a href="/Privacidade" className="hover:text-blue-400 transition">
+              Política de Privacidade
+            </a>
+            <a href="/Contato" className="hover:text-blue-400 transition">
+              Contato
+            </a>
+          </nav>
         </div>
       </footer>
     </div>

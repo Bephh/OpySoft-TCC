@@ -22,6 +22,7 @@ const navigate = useNavigate();
         </div>
 
         <nav className="hidden md:flex gap-6 text-white">
+          <a href="/Login" className="hover:text-sky-700 transition">Login</a>
           <a href="#" className="hover:text-sky-700 transition">Home</a>
           <a href="#sobre" className="hover:text-sky-700 transition">Sobre</a>
           <a href="#beneficios" className="hover:text-sky-700 transition">Benefícios</a>
@@ -48,7 +49,7 @@ const navigate = useNavigate();
           </button>
           <p className="text-xs text-gray-400">
             Ao fazer o teste gratuito, você concorda com nossos{" "}
-            <span className="underline cursor-pointer text-gray-300 hover:text-red-400">
+            <span onClick={() => navigate('/Termos')} className="underline cursor-pointer text-gray-300 hover:text-red-400">
               termos de serviço
             </span>
           </p>
@@ -146,9 +147,9 @@ const navigate = useNavigate();
             © {new Date().getFullYear()} OpySoft. Todos os direitos reservados.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-red-400 transition">Termos de Serviço</a>
-            <a href="#" className="hover:text-red-400 transition">Política de Privacidade</a>
-            <a href="#" className="hover:text-red-400 transition">Contato</a>
+            <a href="/Termos" className="hover:text-sky-700 transition">Termos de Serviço</a>
+            <a href="Privacidade" className="hover:text-sky-700 transition">Política de Privacidade</a>
+            <a href="#" className="hover:text-sky-700 transition">Contato</a>
           </div>
         </div>
       </footer>
