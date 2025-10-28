@@ -5,9 +5,8 @@ import { useAuth } from '../AuthContext.jsx';
 export default function ProtectedRoute({ children }) {
   const { currentUser, loading } = useAuth();
 
-  // Enquanto o estado de autenticação está sendo carregado
   if (loading) {
-    // Tela de carregamento (você deve ver isso por um momento)
+    // Tela de carregamento
     return (
       <div className='flex items-center justify-center h-screen bg-[#0f172a] text-white text-lg font-semibold'>
         Carregando...
@@ -15,11 +14,11 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  // Se o usuário está logado, renderiza o componente filho (Dashboard)
+  // Se o usuário está logado renderiza o Dashboard
   if (currentUser) {
     return children;
   }
 
-  // Se não está logado, redireciona para a página de login
+  // Se não ta logado redireciona para a página de login
   return <Navigate to="/login" replace />;
 }

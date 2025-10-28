@@ -1,5 +1,3 @@
-// ARQUIVO: src/utils/format.js
-
 export const formatarMoeda = (valor) => {
   const numero = parseFloat(valor);
   

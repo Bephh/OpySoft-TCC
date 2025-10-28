@@ -146,7 +146,6 @@ export default function OrderModal({ onClose, onSave, orderToEdit }) {
         const orderData = {
             id: orderToEdit?.id, 
             clientName: client.trim(),
-            // Passa o status inicial para o componente pai para checagem de estoque
             initialStatus: isEditing ? initialStatus : null,
             total: suggestedPrice, 
             costPrice: costPrice, 
@@ -168,7 +167,6 @@ export default function OrderModal({ onClose, onSave, orderToEdit }) {
     }
 
     return (
-        // Container principal do Modal
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
             
             <div className="bg-[#1e293b] text-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -339,7 +337,7 @@ export default function OrderModal({ onClose, onSave, orderToEdit }) {
                                         <Trash2 size={18} />
                                     </button>
                                 </div>
-                                ) // FIM DO RETURN
+                                ) 
                             })}
                         </div>
 

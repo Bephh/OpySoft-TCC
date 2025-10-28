@@ -11,7 +11,7 @@ const formatToInput = (value) => {
 export default function AddTransactionModal({ onClose, onSave }) {
     const { orders, loading, error: ordersError } = useCompletedOrders();
 
-    const [tipo, setTipo] = useState('Receita'); // 'Receita' ou 'Despesa'
+    const [tipo, setTipo] = useState('Receita'); 
     const [descricao, setDescricao] = useState('');
     const [valor, setValor] = useState('');
     const [pedidoSelecionado, setPedidoSelecionado] = useState('');
@@ -36,7 +36,7 @@ export default function AddTransactionModal({ onClose, onSave }) {
     };
 
     const handleSave = async (e) => {
-        e.preventDefault(); // Adicionado para formulários
+        e.preventDefault();
         const numValor = parseFloat(valor);
         if (!descricao || !numValor || numValor <= 0) {
             setError('Preencha a descrição e um valor numérico válido.');
@@ -71,7 +71,7 @@ export default function AddTransactionModal({ onClose, onSave }) {
 
                 <div className="mb-4">
                     <label className="block text-sm font-medium mb-1 text-gray-400">
-                        Vincular a Pedido Concluído (Opcional)
+                        Vincular a Pedido Entregue (Opcional)
                     </label>
                     <select
                         value={pedidoSelecionado}
@@ -80,7 +80,7 @@ export default function AddTransactionModal({ onClose, onSave }) {
                         className="w-full p-2.5 bg-[#0f172a] rounded-lg border border-gray-700 focus:ring-blue-500 focus:border-blue-500"
                     >
                         <option value="">{loading ? 'Carregando pedidos...' : 'Selecionar um Pedido...'}</option>
-                        {ordersError && <option disabled className="text-red-400">🚨 {ordersError}</option>}
+                        {ordersError && <option disabled className="text-red-400"> {ordersError}</option>}
                         {!loading && !ordersError && orders.length === 0 && <option disabled>Nenhum pedido concluído encontrado</option>}
                         {orders.map((order) => (
                             <option key={order.id} value={order.id}>
@@ -128,8 +128,8 @@ export default function AddTransactionModal({ onClose, onSave }) {
                     <label htmlFor="valor" className="block text-sm font-medium text-gray-300 mb-1">Valor (R$)</label>
                     <input
                         id="valor"
-                        type="number" // Use type="number" para melhor validação
-                        step="0.01" // Permite centavos
+                        type="number" 
+                        step="0.01" 
                         value={valor}
                         onChange={(e) => setValor(e.target.value)}
                         className="w-full p-3 bg-[#0f172a] border border-gray-600 rounded-lg text-white"
@@ -146,7 +146,7 @@ export default function AddTransactionModal({ onClose, onSave }) {
                         Cancelar
                     </button>
                     <button
-                        type="submit" // Mudado para submit
+                        type="submit" 
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
                         disabled={isSaving}
                     >

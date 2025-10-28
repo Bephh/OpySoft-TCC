@@ -1,5 +1,3 @@
-// functions/routes.js
-
 const express = require("express");
 const router = express.Router();
 const admin = require("firebase-admin");
@@ -11,9 +9,7 @@ const ITEM_COLLECTION = "itens";
 const USER_PROFILE_COLLECTION = "users";
 const EMPRESA_COLLECTION = "empresas"; 
 
-// --------------------------------------------------------------------
-// 1. ROTA DE CADASTRO (POST /api/register)
-// --------------------------------------------------------------------
+
 router.post("/register", async (req, res) => {
     const data = req.body;
     if (!data.email || !data.password || !data.cnpj) {
@@ -68,16 +64,11 @@ router.post("/register", async (req, res) => {
 });
 
 
-// --------------------------------------------------------------------
-// 2. ROTA DE PERFIL (GET /api/profile)
-// --------------------------------------------------------------------
 
 router.get("/profile", async (req, res) => {
-    // O uid é injetado pelo middleware 'isAuthenticated'
     const uid = req.user.uid; 
 
     try {
-        // Busca os dados no Firestore (simultaneamente)
         const [empresaDoc, userDoc] = await Promise.all([
             db.collection(EMPRESA_COLLECTION).doc(uid).get(),
             db.collection(USER_PROFILE_COLLECTION).doc(uid).get(),
@@ -89,7 +80,6 @@ router.get("/profile", async (req, res) => {
 
         return res.status(200).send({
             message: "Autenticação bem-sucedida.",
-            // Combina os dados
             profile: {
                 ...(userDoc.exists ? userDoc.data() : {}),
                 ...(empresaDoc.exists ? empresaDoc.data() : {})
@@ -102,10 +92,6 @@ router.get("/profile", async (req, res) => {
     }
 });
 
-
-// --------------------------------------------------------------------
-// 3. ROTA PROTEGIDA DE DADOS (POST /api/itens)
-// --------------------------------------------------------------------
 
 router.post("/itens", async (req, res) => {
     const user_id = req.user.uid;

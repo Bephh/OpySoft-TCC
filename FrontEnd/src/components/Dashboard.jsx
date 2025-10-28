@@ -14,13 +14,11 @@ export default function DashBoard() {
 
   return (
     <div className="flex h-screen bg-[#0f172a] text-white">
-      {/* Backdrop para mobile quando o sidebar estiver aberto */}
       {sidebarOpen && <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />}
 
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
-        {/* Botão hamburger visível apenas em mobile para abrir o sidebar */}
         <div className="md:hidden mb-4">
           <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-md bg-[#071028] text-white">
             <Menu size={20} />
