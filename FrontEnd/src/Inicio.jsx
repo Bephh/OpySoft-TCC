@@ -103,7 +103,7 @@ const navigate = useNavigate();
             <div>
               <h4 className="font-semibold text-white">Segurança</h4>
               <p className="text-gray-400 text-sm">
-                Criptografia de nível militar (256-bit AES).
+                Criptografia Segura.
               </p>
             </div>
           </div>
