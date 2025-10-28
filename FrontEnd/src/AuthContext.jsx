@@ -1,9 +1,12 @@
+// src/AuthContext.jsx
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 // 1. Importar funções de atualização do Firebase
 import { onAuthStateChanged, signOut, updateProfile } from 'firebase/auth'; 
 // 2. Importar funções de manipulação do Firestore
 import { doc, getDoc, updateDoc } from 'firebase/firestore'; 
-import { auth, db } from './firebase-config'; 
+// 3. Importação do seu arquivo de configuração do Firebase
+import { auth, db } from './firebase-config'; // Mantenho o nome que você usou na importação
 
 // Cria o contexto
 const AuthContext = createContext();
@@ -16,7 +19,7 @@ export const useAuth = () => {
 // Provedor de Contexto (Wrapper)
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
-    const [userData, setUserData] = useState(null); 
+    const [userData, setUserData] = useState(null); // Dados da empresa (Firestore)
     const [loading, setLoading] = useState(true);
 
     // Função para atualizar os dados do usuário
@@ -77,19 +80,21 @@ export const AuthProvider = ({ children }) => {
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
-                        // Combina o objeto user do Auth com os dados da empresa do Firestore
                         const companyData = docSnap.data();
                         setUserData(companyData);
-                        // Garante que o estado currentUser também inclua dados do Auth (como photoURL/displayName)
+                        
+                        // Garante que o estado currentUser também inclua dados do Auth 
+                        // (útil para consistência, embora user do onAuthStateChanged já seja a fonte primária)
                         setCurrentUser(prevUser => ({
-                            ...prevUser,
+                            ...user, // Usa o objeto user mais recente
                             displayName: user.displayName,
                             photoURL: user.photoURL,
                         }));
 
                     } else {
-                        console.error("Dados da empresa não encontrados no Firestore.");
+                        console.warn("Dados da empresa não encontrados no Firestore. Pode ser um usuário recém-criado.");
                         setUserData(null);
+                        // O currentUser permanece o objeto do Auth
                     }
                 } catch (error) {
                     console.error("Erro ao buscar dados do usuário:", error);
@@ -112,10 +117,10 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         currentUser,
-        userData, // Contém o nome_empresa
+        userData, // Contém o nome_empresa e outros dados da empresa
         loading,
         logout,
-        updateProfileData, // 4. EXPOR a nova função
+        updateProfileData, 
     };
 
     if (loading) {
@@ -124,7 +129,6 @@ export const AuthProvider = ({ children }) => {
     }
 
     
-
     return (
         <AuthContext.Provider value={value}>
             {children}

@@ -20,7 +20,7 @@ export default function Inventario() {
   };
 
   const getStatusStyle = (quantity, minStock, criticalStock) => {
-    // **CORREÇÃO:** Garante que as quantidades sejam números inteiros para a comparação
+    // Garante que as quantidades sejam números para a comparação
     const qty = parseInt(quantity) || 0;
     const min = parseInt(minStock) || 20;
     const critical = parseInt(criticalStock) || 5;
@@ -37,13 +37,13 @@ export default function Inventario() {
       return;
     }
 
+    // Caminho consistente: /users/{userId}/inventario
     const inventoryCollectionRef = collection(db, 'users', currentUser.uid, 'inventario');
     const q = query(inventoryCollectionRef);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map(doc => ({
         id: doc.id,
-        // **CORREÇÃO:** Garante que a quantidade seja lida como string/number do Firestore
         ...doc.data()
       }));
       setInventory(items);
@@ -59,11 +59,12 @@ export default function Inventario() {
   const onSaveItem = async (newItemData) => {
     if (!currentUser?.uid) return;
     try {
+      // Cria a referência para o novo documento na subcoleção correta
       const docRef = doc(collection(db, 'users', currentUser.uid, 'inventario'));
       await setDoc(docRef, {
         ...newItemData,
         dataCriacao: new Date().toISOString(),
-        // **MELHORIA:** Garante que a quantidade e minStock sejam salvos como strings ou numbers consistentes
+        // Garante que a quantidade e minStock sejam salvos como strings (ou number se preferir)
         quantity: newItemData.quantity ? String(newItemData.quantity) : '0',
         minStock: newItemData.minStock ? String(newItemData.minStock) : '20',
         criticalStock: newItemData.criticalStock ? String(newItemData.criticalStock) : '5',
@@ -71,30 +72,32 @@ export default function Inventario() {
       alert("Item adicionado com sucesso!");
     } catch (error) {
       console.error("Erro ao adicionar item:", error);
-      alert("Falha ao adicionar item.");
+      alert("Falha ao adicionar item. Verifique as permissões.");
     }
   };
 
   const onUpdateItem = async (itemId, updatedData) => {
     if (!currentUser?.uid) return;
     try {
+      // Referência para o documento específico a ser atualizado
       const itemRef = doc(db, 'users', currentUser.uid, 'inventario', itemId);
       await setDoc(itemRef, updatedData, { merge: true });
       alert("Item atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar item:", error);
-      alert("Falha ao atualizar item.");
+      alert("Falha ao atualizar item. Verifique as permissões.");
     }
   };
 
   const onDeleteItem = async (itemId) => {
     if (!currentUser?.uid || !window.confirm("Tem certeza que deseja deletar este item?")) return;
     try {
+      // Referência para o documento específico a ser deletado
       await deleteDoc(doc(db, 'users', currentUser.uid, 'inventario', itemId));
       alert("Item deletado com sucesso!");
     } catch (error) {
       console.error("Erro ao deletar item:", error);
-      alert("Falha ao deletar item.");
+      alert("Falha ao deletar item. Verifique as permissões.");
     }
   };
 
@@ -115,7 +118,7 @@ export default function Inventario() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className=" cursor-pointer flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-150 shadow-lg shadow-blue-500/30"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-150 shadow-lg shadow-blue-500/30"
         >
           <Plus size={20} />
           Adicionar Item
@@ -170,14 +173,14 @@ export default function Inventario() {
                           <button
                             onClick={() => handleEditClick(item)}
                             title="Editar Item"
-                            className="text-blue-400 hover:text-blue-300 p-1 rounded-full hover:bg-gray-700 transition cursor-pointer"
+                            className="text-blue-400 hover:text-blue-300 p-1 rounded-full hover:bg-gray-700 transition"
                           >
                             <Edit size={18} />
                           </button>
                           <button
                             onClick={() => onDeleteItem(item.id)}
                             title="Deletar Item"
-                            className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-gray-700 transition cursor-pointer"
+                            className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-gray-700 transition"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -194,7 +197,6 @@ export default function Inventario() {
 
       {showAddModal && <AddItemModal onClose={() => setShowAddModal(false)} onSave={onSaveItem} />}
 
-      {/* O Ajuste de Estoque é chamado corretamente */}
       {itemToEdit && (
         <AdjustStockModal
           onClose={() => setItemToEdit(null)}
