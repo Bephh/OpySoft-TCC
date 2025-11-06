@@ -8,7 +8,7 @@ import {
   Layers,
   Wrench,
   LogOut, 
-  X,
+  X,PackageOpen
 } from "lucide-react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +37,9 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen = true, onClos
     { name: "Pedidos", icon: <ShoppingCart size={18} /> },
     { name: "Montador de PC", icon: <Cpu size={18} /> },
     { name: "Finanças", icon: <DollarSign size={18} /> },
+    { name: "Montados", icon: <PackageOpen size={18} /> },
     { name: "Planos", icon: <Layers size={18} /> },
+   
   ];
 
   return (

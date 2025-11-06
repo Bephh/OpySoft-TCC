@@ -7,6 +7,7 @@ import Pedidos from "../pages/Pedidos";
 import Planos from "../pages/Planos";
 import Montador from "../pages/Montador";
 import Financas from "../pages/Financas";
+import Montados from "../pages/Montados";
 
 export default function DashBoard() {
   const [activeTab, setActiveTab] = useState("Painel");
@@ -30,6 +31,8 @@ export default function DashBoard() {
         {activeTab === "Planos" && <Planos />}
         {activeTab === "Montador de PC" && <Montador />}
         {activeTab === "Finanças" && <Financas />}
+        {activeTab === "Montados" && <Montados />}
+
       </main>
     </div>
   );
