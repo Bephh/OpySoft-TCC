@@ -1,8 +1,7 @@
-// FrontEnd/src/firebase-config.js
-
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyD1ZxgQwzLBcHsYSTN93psg11PslckYsnQ",
@@ -14,6 +13,9 @@ const firebaseConfig = {
     measurementId: "G-9DMVCE4X5J"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 
+    ? initializeApp(firebaseConfig) 
+    : getApp();
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);

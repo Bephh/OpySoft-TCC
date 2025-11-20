@@ -2,15 +2,17 @@ import React from 'react';
 import { DollarSign, ShoppingCart, Archive, TrendingUp, TrendingDown } from 'lucide-react';
 import { useDashboardData } from '../hooks/useDashboardData'; // Hook do painel
 import { formatarMoeda } from '../utils/format';
+
 // Componente Card para os resumos
 const DashboardCard = ({ title, value, icon, className = "", children }) => (
-  <div className={`bg-[#1e293b] p-6 rounded-xl shadow-lg flex flex-col justify-between ${className}`}>
+  // CORREÇÃO: Garantir que o texto dentro do card use as cores do tema
+  <div className={`bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg flex flex-col justify-between ${className}`}>
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-gray-400 text-sm font-medium uppercase">{title}</h3>
+        <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase">{title}</h3>
         {icon}
       </div>
-      <p className="text-3xl font-bold text-white mb-2">{value}</p>
+      <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{value}</p>
     </div>
     {children}
   </div>
@@ -23,7 +25,7 @@ const BarChart = ({ data, labels, title, colorClass, isCurrency = false }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <h2 className="text-lg font-semibold text-white mb-4">{title}</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h2>
       <div className="flex-1 flex items-end justify-between h-48">
         {data.map((val, index) => {
           const heightPercent = (val / maxVal) * 100;
@@ -37,7 +39,7 @@ const BarChart = ({ data, labels, title, colorClass, isCurrency = false }) => {
               <span className="absolute bottom-full mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10">
                 {formatValue(val)}
               </span>
-              <span className="text-xs text-gray-400 mt-1">{labels[index]}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">{labels[index]}</span>
             </div>
           );
         })}
@@ -61,7 +63,8 @@ export default function Painel() {
   } = useDashboardData();
 
   if (loading) {
-    return <div className="p-6 text-white text-center">Carregando dados do Painel...</div>;
+    // CORREÇÃO: Garantir que a mensagem de carregamento use as cores do tema
+    return <div className="p-6 text-gray-900 dark:text-white text-center">Carregando dados do Painel...</div>;
   }
 
   const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -69,12 +72,14 @@ export default function Painel() {
   const arrowIcon = isPositive ? <TrendingUp size={20} className="text-green-500" /> : <TrendingDown size={20} className="text-red-500" />;
 
   return (
-    <div className="p-6 bg-[#0f172a] text-white min-h-screen">
+    // CORREÇÃO: O fundo do Painel é transparente, o fundo principal é definido no Dashboard.jsx
+    <div className="p-6 bg-transparent text-gray-900 dark:text-white min-h-screen">
       <h1 className="text-3xl font-bold mb-2">Painel</h1>
-      <p className="text-gray-400 mb-8">Bem-vindo de volta, aqui está um resumo de suas operações.</p>
+      <p className="text-gray-500 dark:text-gray-400 mb-8">Bem-vindo de volta, aqui está um resumo de suas operações.</p>
 
       {erro && (
-        <div className="bg-red-900 p-4 rounded-lg mb-6 text-red-300">
+        // CORREÇÃO: Garantir que a mensagem de erro use as cores do tema
+        <div className="bg-red-100 dark:bg-red-900 p-4 rounded-lg mb-6 text-red-700 dark:text-red-300">
           ⚠️ **ERRO:** {erro}. Verifique os logs do console.
         </div>
       )}
@@ -88,7 +93,7 @@ export default function Painel() {
           value={formatarMoeda(receitaTotal)}
           icon={<DollarSign className="text-blue-500" />}
         >
-          <div className={`text-sm flex items-center mt-2 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+          <div className={`text-sm flex items-center mt-2 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
             {arrowIcon}
             <span className="ml-1">{variacaoReceita}% do último mês</span>
           </div>
@@ -100,7 +105,7 @@ export default function Painel() {
           value={`+${novosPedidos}`}
           icon={<ShoppingCart className="text-yellow-500" />}
         >
-          <span className="text-sm text-gray-400 mt-2">{novosPedidos} em processamento</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{novosPedidos} em processamento</span>
         </DashboardCard>
 
         {/* Itens com Estoque Baixo */}
@@ -109,7 +114,7 @@ export default function Painel() {
           value={estoqueBaixo}
           icon={<Archive className="text-red-500" />}
         >
-          <span className="text-sm text-gray-400 mt-2">{estoqueBaixo} itens precisam de reposição</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{estoqueBaixo} itens precisam de reposição</span>
         </DashboardCard>
 
         {/* Produção em Andamento (Exemplo) */}
@@ -118,7 +123,7 @@ export default function Painel() {
           value={producaoAndamento}
           icon={<Archive className="text-purple-500" />}
         >
-          <span className="text-sm text-gray-400 mt-2">{producaoAndamento} produções ativas</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{producaoAndamento} produções ativas</span>
         </DashboardCard>
       </div>
 
@@ -126,7 +131,7 @@ export default function Painel() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Visão Geral da Receita */}
-        <div className="bg-[#1e293b] p-6 rounded-xl shadow-lg h-96">
+        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96">
           <BarChart
             title="Visão Geral da Receita"
             data={receitaPorMes}
@@ -137,7 +142,7 @@ export default function Painel() {
         </div>
 
         {/* Volume de Pedidos */}
-        <div className="bg-[#1e293b] p-6 rounded-xl shadow-lg h-96">
+        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96">
           <BarChart
             title="Volume de Pedidos"
             data={volumePedidosPorMes}

@@ -15,38 +15,23 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     // Função para atualizar os dados do usuário
-    const updateProfileData = async ({ displayName, photoURL }) => {
+    const updateProfileData = async (updates) => {
         if (!currentUser) throw new Error("Usuário não logado.");
 
-        const authUpdates = {
-            displayName: displayName,
-            photoURL: photoURL,
-        };
-        
-        const firestoreUpdates = {
-            nome_empresa: displayName, 
-            photoURL: photoURL,
-        };
-
         try {
-            // 1. Atualiza o perfil no Firebase Authentication
-            await updateProfile(currentUser, authUpdates);
+            // Atualiza o perfil no Firebase Authentication (se houver displayName)
+            if (updates.displayName) {
+                await updateProfile(currentUser, { displayName: updates.displayName });
+            }
 
-            // 2. Atualiza os dados no Firestore
+            // Atualiza os dados no Firestore
             const docRef = doc(db, 'empresas', currentUser.uid);
-            await updateDoc(docRef, firestoreUpdates);
+            await updateDoc(docRef, updates);
 
-            // 3. Atualiza os estados locais 
-            
-            setCurrentUser(prevUser => ({
-                ...prevUser,
-                ...authUpdates,
-            }));
-
-            // Atualiza userData 
+            // Atualiza o estado local do userData para refletir as mudanças instantaneamente
             setUserData(prevData => ({
                 ...prevData,
-                ...firestoreUpdates,
+                ...updates,
             }));
 
         } catch (error) {
@@ -55,31 +40,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-
     // Monitora o estado de autenticação do Firebase
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
             
             if (user) {
-                // Se o usuário está logado busca os dados no Firestore 
                 try {
                     const docRef = doc(db, 'empresas', user.uid);
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
-                        const companyData = docSnap.data();
-                        setUserData(companyData);
-                        
-                       
-                        setCurrentUser(prevUser => ({
-                            ...user, 
-                            displayName: user.displayName,
-                            photoURL: user.photoURL,
-                        }));
-
+                        setUserData(docSnap.data());
                     } else {
-                        console.warn("Dados da empresa não encontrados no Firestore. Pode ser um usuário recém-criado.");
+                        console.warn("Dados da empresa não encontrados no Firestore.");
                         setUserData(null);
                     }
                 } catch (error) {
@@ -106,20 +80,16 @@ export const AuthProvider = ({ children }) => {
         userData, 
         loading,
         logout,
-        updateProfileData, 
+        updateProfileData, // Exporta a função de atualização
     };
 
     if (loading) {
-        // Tela de carregamento enquanto o estado de autenticação é verificado
-        return <div className='flex items-center justify-center h-screen bg-[#0f172a] text-white'>Carregando...</div>;
+        return <div className='flex items-center justify-center h-screen bg-gray-900 text-white'>Carregando...</div>;
     }
 
-    
     return (
         <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );
-
-    
 };

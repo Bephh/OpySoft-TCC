@@ -1,4 +1,3 @@
-// App.jsx
 import { Routes, Route } from 'react-router-dom';
 import Inicio from './Inicio';
 import SobreNos from './SobreNos';
@@ -9,6 +8,8 @@ import Termo from './Termos';
 import Privacidade from './Privacidade';
 import DashBoard from './components/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+// Importa o componente Montados, necessário para o Dashboard carregar
+import Montados from './pages/Montados';
 
 function App() {
   return (
@@ -19,8 +20,9 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/Termos" element={<Termo />} />
       <Route path="/Privacidade" element={<Privacidade />} />
-      <Route path="/DashBoard"element={<ProtectedRoute><DashBoard /></ProtectedRoute>}/>
-
+      {/* Rotas Protegidas - DashBoard como container principal */}
+      <Route path="/DashBoard" element={<ProtectedRoute><DashBoard /></ProtectedRoute>} />
+      {/* Você pode adicionar rotas específicas se desejar no futuro, mas por enquanto, manteremos apenas o /DashBoard */}
     </Routes>
   );
 }
