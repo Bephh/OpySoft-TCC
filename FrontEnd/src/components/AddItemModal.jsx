@@ -2,35 +2,35 @@ import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
 
 export default function AddItemModal({ onClose, onSave }) {
-    
+
     const [formData, setFormData] = useState({
         component: '',
         sku: '',
-        category: '', 
+        category: '',
         quantity: 0,
         supplier: '',
-        
-        price: 0,
-        power: 0,
-        
-        socket: '', 
-        ramType: '', 
-        watt: 0, 
 
-        minStock: 20, 
-        criticalStock: 5, 
+        price: 0,
+        estimatedPower: 0, // RENOMEADO para consistência
+
+        socket: '',
+        ramType: '',
+        watt: 0, // Campo específico para Fonte
+
+        minStock: 20,
+        criticalStock: 5,
     });
     const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, type } = e.target;
-        
+
         let finalValue;
         if (type === 'number') {
             if (name === 'price') {
                 finalValue = parseFloat(value) || 0;
             } else {
-                finalValue = parseInt(value, 10) || 0; 
+                finalValue = parseInt(value, 10) || 0;
             }
         } else {
             finalValue = value;
@@ -42,63 +42,64 @@ export default function AddItemModal({ onClose, onSave }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsSaving(true);
-        
+
         // Garante que todos os valores numéricos sejam parseados corretamente para o Firebase
         const payload = {
             ...formData,
-            quantity: parseInt(formData.quantity, 10) || 0, 
+            quantity: parseInt(formData.quantity, 10) || 0,
             price: parseFloat(formData.price) || 0,
-            power: parseInt(formData.power, 10) || 0,
+            estimatedPower: parseInt(formData.estimatedPower, 10) || 0, // USANDO estimatedPower
             watt: parseInt(formData.watt, 10) || 0,
             minStock: parseInt(formData.minStock, 10) || 0,
             criticalStock: parseInt(formData.criticalStock, 10) || 0,
         };
-        
+
         const savePromise = onSave(payload);
-        
+
         if (savePromise && typeof savePromise.finally === 'function') {
-            savePromise.finally(() => { 
+            savePromise.finally(() => {
                 setIsSaving(false);
                 onClose();
             });
         } else {
-             setIsSaving(false);
-             onClose();
+            setIsSaving(false);
+            onClose();
         }
     };
-    
+
     const inputStyle = "mt-1 block w-full bg-[#1e293b] border border-gray-700 rounded-lg shadow-inner p-3 text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 transition duration-150";
 
     const category = formData.category;
+    // Lógica para mostrar campos de compatibilidade (Periférico não ativa nenhum)
     const showSocket = category === 'CPU' || category === 'Placa-Mãe';
     const showRamType = category === 'RAM' || category === 'Placa-Mãe';
     const showWatt = category === 'Fonte';
 
     return (
-        <div 
+        <div
             className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4"
             onClick={onClose}
         >
-            <div 
+            <div
                 className="bg-[#0b1220] p-8 rounded-2xl shadow-2xl shadow-blue-900/50 w-full max-w-xl max-h-[95vh] flex flex-col transform transition-all duration-300 scale-100"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* CABEÇALHO */}
                 <div className="flex justify-between items-center border-b border-gray-700/50 pb-4 mb-6 flex-shrink-0">
                     <h3 className="text-2xl font-extrabold text-blue-400">Adicionar Componente</h3>
-                    <button 
-                        onClick={onClose} 
+                    <button
+                        onClick={onClose}
                         className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition"
                         disabled={isSaving}
                     >
                         <X size={24} />
                     </button>
                 </div>
-                
+
                 {/* CONTEÚDO ROLÁVEL */}
                 <div className="overflow-y-auto pr-2 custom-scrollbar">
                     <form id="add-form" onSubmit={handleSubmit} className="space-y-5">
-                        
+
                         {/* Linha 1: Componente e SKU */}
                         <div className="flex gap-5">
                             <div className="flex-1">
@@ -130,7 +131,8 @@ export default function AddItemModal({ onClose, onSave }) {
                                 <option value="Armazenamento">Armazenamento</option>
                                 <option value="Fonte">Fonte (PSU)</option>
                                 <option value="Gabinete">Gabinete</option>
-                                <option value="Cooler">Cooler</option> 
+                                <option value="Cooler">Cooler</option>
+                                <option value="Periférico">Periférico (Fone, Mouse, Teclado, etc.)</option> {/* NOVO */}
                             </select>
                         </div>
 
@@ -141,8 +143,8 @@ export default function AddItemModal({ onClose, onSave }) {
                                 <input type="number" name="price" id="price" value={formData.price} onChange={handleChange} required min="0" step="0.01" className={inputStyle} placeholder="Ex: 550.99" />
                             </div>
                             <div>
-                                <label htmlFor="power" className="block text-sm font-semibold text-gray-300 mb-1">Consumo (Watts)</label>
-                                <input type="number" name="power" id="power" value={formData.power} onChange={handleChange} required min="0" className={inputStyle} placeholder="Ex: 250" />
+                                <label htmlFor="estimatedPower" className="block text-sm font-semibold text-gray-300 mb-1">Consumo Estimado (Watts)</label> {/* NOME DO CAMPO ATUALIZADO */}
+                                <input type="number" name="estimatedPower" id="estimatedPower" value={formData.estimatedPower} onChange={handleChange} required min="0" className={inputStyle} placeholder="Ex: 250 (ou 0 para periféricos)" />
                             </div>
                             <div>
                                 <label htmlFor="quantity" className="block text-sm font-semibold text-gray-300 mb-1">Quantidade Atual</label>
@@ -184,7 +186,7 @@ export default function AddItemModal({ onClose, onSave }) {
 
 
                         {/* Fornecedor */}
-                        <div className="pt-2"> 
+                        <div className="pt-2">
                             <label htmlFor="supplier" className="block text-sm font-semibold text-gray-300 mb-1">Fornecedor</label>
                             <input type="text" name="supplier" id="supplier" value={formData.supplier} onChange={handleChange} required className={inputStyle} placeholder="Ex: NVIDIA Brasil" />
                         </div>
@@ -210,7 +212,7 @@ export default function AddItemModal({ onClose, onSave }) {
                             </div>
                         </div>
                     </form>
-                </div> 
+                </div>
 
                 {/* RODAPÉ (com botão de submit) */}
                 <div className="pt-6 flex justify-end gap-3 flex-shrink-0 border-t border-gray-700/50 mt-4">
@@ -224,13 +226,12 @@ export default function AddItemModal({ onClose, onSave }) {
                     </button>
                     <button
                         type="submit"
-                        form="add-form" 
+                        form="add-form"
                         disabled={isSaving}
-                        className={`py-3 px-6 rounded-xl font-bold transition duration-150 flex items-center gap-2 ${
-                            isSaving 
-                                ? 'bg-blue-800 text-white opacity-70 cursor-not-allowed' 
+                        className={`py-3 px-6 rounded-xl font-bold transition duration-150 flex items-center gap-2 ${isSaving
+                                ? 'bg-blue-800 text-white opacity-70 cursor-not-allowed'
                                 : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/30'
-                        }`}
+                            }`}
                     >
                         {isSaving ? (
                             <>

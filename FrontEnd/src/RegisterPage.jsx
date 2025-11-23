@@ -1,13 +1,101 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Building2, Mail, Lock, Phone, Landmark } from 'lucide-react';
-import { mask, unMask } from 'remask';
-import { auth, db } from './firebase-config';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { Building2, Mail, Lock, Phone, Landmark, CheckCircle } from 'lucide-react';
 
-export default function RegisterCompanyPage() {
-    const navigate = useNavigate();
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { mask, unMask } from 'remask';
+
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+let app;
+let auth;
+let db;
+
+const initializeFirebase = async (setAuthReady, setUserId) => {
+    try {
+
+        if (getApps().length === 0) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();
+        }
+
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        window.base64ToArrayBuffer = (base64) => {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        };
+
+        window.pcmToWav = (pcm16, sampleRate) => {
+            const numChannels = 1;
+            const bytesPerSample = 2;
+            const buffer = new ArrayBuffer(44 + pcm16.byteLength);
+            const view = new DataView(buffer);
+            let offset = 0;
+
+            const writeString = (str) => {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(offset + i, str.charCodeAt(i));
+                }
+                offset += str.length;
+            };
+
+            writeString('RIFF'); offset += 4;
+            view.setUint32(offset, 36 + pcm16.byteLength, true); offset += 4;
+            writeString('WAVE'); offset += 4;
+
+            writeString('fmt '); offset += 4;
+            view.setUint32(offset, 16, true); offset += 4;
+            view.setUint16(offset, 1, true); offset += 2;
+            view.setUint16(offset, numChannels, true); offset += 2;
+            view.setUint32(offset, sampleRate, true); offset += 4;
+            view.setUint32(offset, sampleRate * numChannels * bytesPerSample, true); offset += 4;
+            view.setUint16(offset, numChannels * bytesPerSample, true); offset += 2;
+            view.setUint16(offset, bytesPerSample * 8, true); offset += 2;
+
+            writeString('data'); offset += 4;
+            view.setUint32(offset, pcm16.byteLength, true); offset += 4;
+
+            const pcmBytes = new Uint8Array(pcm16.buffer);
+            for (let i = 0; i < pcmBytes.length; i++) {
+                view.setUint8(offset + i, pcmBytes[i]);
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        };
+
+        // Não há tentativa de signInAnonymously/signInWithCustomToken aqui (CORREÇÃO DE auth/admin-restricted-operation)
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserId(user.uid);
+            } else {
+                setUserId(null);
+            }
+            setAuthReady(true);
+        });
+
+    } catch (e) {
+        console.error("Erro na inicialização do Firebase:", e);
+        setAuthReady(true);
+    }
+};
+
+
+export default function App() {
+    const [userId, setUserId] = useState(null);
+    const [isAuthReady, setAuthReady] = useState(false);
+
+    const [pageState, setPageState] = useState('register');
 
     const [formData, setFormData] = useState({
         nome_empresa: '',
@@ -21,61 +109,62 @@ export default function RegisterCompanyPage() {
 
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null);
+    const [messageType, setMessageType] = useState(null);
 
-    //FUNÇÕES DE MÁSCARA E MANIPULAÇÃO DE ESTADO
+    useEffect(() => {
+        initializeFirebase(setAuthReady, setUserId);
+    }, []);
 
     const handleCnpjChange = (e) => {
         const onlyNumbers = unMask(e.target.value);
         const masked = mask(onlyNumbers, ['99.999.999/9999-99']);
 
-        setFormData(prevData => ({
-            ...prevData,
-            cnpj: masked
-        }));
-        setError(null);
+        setFormData(prevData => ({ ...prevData, cnpj: masked }));
+        setMessage(null); setMessageType(null);
     };
 
     const handleTelefoneChange = (e) => {
         const onlyNumbers = unMask(e.target.value);
         const masked = mask(onlyNumbers, ['(99) 9999-9999', '(99) 99999-9999']);
 
-        setFormData(prevData => ({
-            ...prevData,
-            telefone: masked
-        }));
-        setError(null);
+        setFormData(prevData => ({ ...prevData, telefone: masked }));
+        setMessage(null); setMessageType(null);
     };
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-        setError(null);
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setMessage(null); setMessageType(null);
     };
 
     const handleTermsToggle = () => {
         setIsTermsAccepted(!isTermsAccepted);
     };
 
-    //FUNÇÃO DE SUBMISSÃO
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!isAuthReady) {
+            setMessage("Aguarde a inicialização do sistema.");
+            setMessageType('error');
+            return;
+        }
+
         if (!isTermsAccepted) {
-            setError("Você deve aceitar os Termos de Serviço para continuar.");
+            setMessage("Você deve aceitar os Termos de Serviço para continuar.");
+            setMessageType('error');
             return;
         }
 
         if (formData.password !== formData.confirmPassword) {
-            setError("As senhas não coincidem.");
+            setMessage("As senhas não coincidem.");
+            setMessageType('error');
             return;
         }
 
         setIsLoading(true);
-        setError(null);
+        setMessage(null);
+        setMessageType(null);
 
         try {
             // 1. CRIAÇÃO DE USUÁRIO (FIREBASE AUTH)
@@ -89,8 +178,8 @@ export default function RegisterCompanyPage() {
             const cnpj_unmasked_sanitized = unMask(formData.cnpj).replace(/\D/g, '');
             const telefone_unmasked_sanitized = unMask(formData.telefone).replace(/\D/g, '');
 
-            // 2. SALVAR DADOS DA EMPRESA (FIRESTORE)'
-            const empresaRef = doc(db, "empresas", uid);
+            // 2. SALVAR DADOS DA EMPRESA (FIRESTORE) - CORREÇÃO DE CAMINHO PARA 'empresas/{uid}'
+            const empresaRef = doc(db, 'empresas', uid);
 
             await setDoc(empresaRef, {
                 uid: uid,
@@ -102,51 +191,80 @@ export default function RegisterCompanyPage() {
                 data_cadastro: serverTimestamp(),
             });
 
-            // 3. SALVAR DOCUMENTO DE PERFIL (FIRESTORE)
-            const userProfileRef = doc(db, "users", uid);
-            await setDoc(userProfileRef, {
-                uid: uid,
-                nome_empresa: formData.nome_empresa,
-                email: formData.email,
-                criado_em: serverTimestamp(),
-            });
-
-
             console.log("Cadastro bem-sucedido. UID:", uid);
-            alert("Cadastro realizado com sucesso! Faça login.");
-            navigate('/login');
+            setMessage("Cadastro realizado com sucesso! Você pode ir para o login.");
+            setMessageType('success');
+            setPageState('success');
+
 
         } catch (error) {
-            // Tratamento de erros de Auth do Firebase
             let errorMessage = "Erro desconhecido durante o cadastro.";
 
-            if (error.code === 'auth/email-already-in-use') {
-                errorMessage = "Este email já está cadastrado. Tente fazer login.";
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = "O formato do email é inválido.";
-            } else if (error.code === 'auth/weak-password') {
-                errorMessage = "A senha deve ter pelo menos 6 caracteres.";
+            if (error.code && error.code.startsWith('auth/')) {
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "Este email já está cadastrado. Tente fazer login.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O formato do email é inválido.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "A senha deve ter pelo menos 6 caracteres.";
+                }
+            } else if (error.code && error.code === 'permission-denied') {
+                errorMessage = "Erro de permissão no servidor. Verifique as Regras de Segurança do Firestore.";
             } else {
                 errorMessage = `Erro: ${error.message}`;
             }
 
             console.error("Erro no registro:", error);
-            setError(errorMessage);
+            setMessage(errorMessage);
+            setMessageType('error');
+
         } finally {
             setIsLoading(false);
         }
     };
 
-    const isButtonDisabled = isLoading || !isTermsAccepted;
+    const isButtonDisabled = isLoading || !isTermsAccepted || !isAuthReady;
 
 
+    const MessageDisplay = ({ message, type }) => {
+        if (!message) return null;
+        const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
+        return (
+            <div className={`${bgColor} text-white p-3 rounded-md mb-4 text-center transition-opacity duration-300`}>
+                {message}
+            </div>
+        );
+    };
+
+    // Renderização da Tela de Sucesso
+    if (pageState === 'success') {
+        return (
+            <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
+                <div className="bg-gray-800 bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+                    <CheckCircle className="text-cyan-500 w-16 h-16 mx-auto mb-4" />
+                    <h2 className="text-3xl font-bold mb-4">Cadastro Concluído!</h2>
+                    <p className="text-gray-300 mb-6">
+                        Sua empresa foi cadastrada com sucesso. Agora você pode fazer o login para acessar o sistema.
+                    </p>
+                    {/* CORREÇÃO DE NAVEGAÇÃO: Remove onClick para ir para /login */}
+                    <a
+                        href='/login'
+                        className="w-full inline-block bg-cyan-500 hover:bg-sky-700 text-white font-semibold py-3 rounded-md shadow transition"
+                    >
+                        Ir para o Login
+                    </a>
+                </div>
+            </div>
+        );
+    }
+
+    // Renderização do Formulário de Registro
     return (
         <div className="min-h-screen bg-gradient-to-t from-cyan-700 to-sky-950 text-white flex flex-col items-center justify-center px-4">
 
-            {/* Header ... */}
             <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+                    <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center font-bold text-sm">O</div>
                     <a href="/">
                         <span className="font-bold text-lg text-white">
                             Opy<span className="text-cyan-500">Soft</span>
@@ -161,20 +279,13 @@ export default function RegisterCompanyPage() {
                 </nav>
             </header>
 
-            {/* Formulário de Cadastro de Empresa */}
             <div className="bg-gray-800 bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-2xl mt-24">
                 <h2 className="text-3xl font-bold mb-6 text-center">Cadastro da Empresa</h2>
 
-                {/* Exibir Erro */}
-                {error && (
-                    <div className="bg-red-500 text-white p-3 rounded-md mb-4 text-center">
-                        {error}
-                    </div>
-                )}
+                <MessageDisplay message={message} type={messageType} />
 
                 <form className="space-y-5" onSubmit={handleSubmit}>
 
-                    {/* Nome da empresa */}
                     <div>
                         <label className="block text-sm mb-1">Nome da empresa</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -191,7 +302,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* CNPJ */}
                     <div>
                         <label className="block text-sm mb-1">CNPJ</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -208,7 +318,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* Razão Social */}
                     <div>
                         <label className="block text-sm mb-1">Razão Social</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -225,7 +334,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* Email */}
                     <div>
                         <label className="block text-sm mb-1">Email corporativo</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -242,7 +350,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* Telefone */}
                     <div>
                         <label className="block text-sm mb-1">Telefone</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -259,7 +366,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* Senha */}
                     <div>
                         <label className="block text-sm mb-1">Senha</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -276,7 +382,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* Confirmar senha */}
                     <div>
                         <label className="block text-sm mb-1">Confirmar senha</label>
                         <div className="flex items-center bg-gray-700 rounded px-3 py-2">
@@ -293,7 +398,6 @@ export default function RegisterCompanyPage() {
                         </div>
                     </div>
 
-                    {/* Checkbox de Termos de Serviço */}
                     <div className="flex items-center space-x-2 pt-2">
                         <input
                             type="checkbox"
@@ -304,13 +408,12 @@ export default function RegisterCompanyPage() {
                         />
                         <label htmlFor="termsAcceptance" className="text-sm text-gray-300">
                             Eu li e concordo com os{' '}
-                            <Link to="/Termos" className="text-cyan-500 hover:text-sky-400 underline font-medium" target="_blank" rel="noopener noreferrer">
+                            <a href="/Termos" target="_blank" rel="noopener noreferrer" className="text-cyan-500 hover:text-sky-400 underline font-medium">
                                 Termos de Serviço
-                            </Link>
+                            </a>
                         </label>
                     </div>
 
-                    {/* Botão de cadastro */}
                     <button
                         type="submit"
                         disabled={isButtonDisabled}
@@ -323,10 +426,13 @@ export default function RegisterCompanyPage() {
                         {isLoading ? 'Cadastrando...' : 'Cadastrar Empresa'}
                     </button>
 
-                    {/* Link para login */}
                     <p className="text-center text-sm mt-4 text-gray-400">
                         Já tem uma conta?{' '}
-                        <a href='/login' onClick={() => navigate('/login')} className="text-cyan-500 hover:text-sky-400 underline"> <br />
+                        {/* CORREÇÃO DE NAVEGAÇÃO: Remove onClick para ir para /login */}
+                        <a
+                            href='/login'
+                            className="text-cyan-500 hover:text-sky-400 underline">
+                            <br />
                             Faça login
                         </a>
                     </p>
