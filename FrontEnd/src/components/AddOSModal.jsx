@@ -108,7 +108,7 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-70 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
       <div className="bg-[#0b1220] p-8 rounded-2xl shadow-2xl shadow-blue-900/50 w-full max-w-lg max-h-[95vh] flex flex-col transform transition-all duration-300 scale-100" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center border-b border-gray-700/50 pb-4 mb-6 flex-shrink-0">
           <h2 className="text-2xl font-extrabold text-blue-400">
