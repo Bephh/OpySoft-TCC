@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Menu as MenuIcon } from 'lucide-react';
 import Sidebar from './Sidebar';
 
 // Importe todos os seus componentes de página de src/pages/
@@ -94,26 +95,43 @@ export default function DashBoard() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full min-h-screen w-full bg-gray-900" onClick={() => isSidebarOpen && setIsSidebarOpen(false)}>
+      {/* Overlay para fechar sidebar ao clicar fora (mobile) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 md:hidden z-40"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsSidebarOpen(false);
+          }}
+        />
+      )}
+
       {/* 1. Sidebar */}
-      <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      <div onClick={(e) => e.stopPropagation()}>
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+      </div>
 
       {/* 2. Conteúdo Principal */}
-      <main className="flex-1 overflow-y-auto bg-gray-900 text-white">
-        {/* Botão de menu para telas mobile */}
+      <main className="flex-1 flex flex-col overflow-hidden bg-gray-900 text-white w-full" onClick={(e) => e.stopPropagation()}>
+        {/* Botão de menu para telas mobile - sem texto, apenas ícone */}
         <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="md:hidden p-3 bg-blue-600 rounded-lg m-4 fixed top-0 left-0 z-40"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsSidebarOpen(true);
+          }}
+          className="md:hidden p-3 bg-blue-600 hover:bg-blue-700 rounded-lg m-4 fixed top-0 left-0 z-50 transition"
+          aria-label="Abrir menu"
         >
-          Menu
+          <MenuIcon size={24} />
         </button>
 
-        <div className="p-4 sm:p-6 md:p-8">
+        <div className="flex-1 overflow-y-auto w-full p-4 sm:p-6 md:p-8">
           {renderContent()}
         </div>
       </main>

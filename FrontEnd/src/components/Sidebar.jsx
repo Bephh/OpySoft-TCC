@@ -72,11 +72,11 @@ import React, { useState } from 'react';
     ];
 
     return (
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform 
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 h-screen transform transition-transform 
                          bg-gray-900 
                          flex flex-col justify-between 
                          ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
-                         md:relative md:translate-x-0`}>
+                         md:relative md:translate-x-0 md:h-full md:inset-auto`}>
         <div>
           <div className="p-6 flex items-center gap-2 relative">
             {/* Ícone da Aplicação Dinâmico */}

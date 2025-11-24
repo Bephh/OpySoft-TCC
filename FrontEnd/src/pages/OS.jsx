@@ -124,26 +124,26 @@ export default function OrdemDeServico() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-white mb-6 flex items-center">
+    <div className="p-2 sm:p-6 w-full">
+      <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 flex items-center">
         <ClipboardList className="mr-3" size={28} />
         Ordens de Serviço
       </h1>
 
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex space-x-4">
-          <div className="relative">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:justify-between sm:items-center">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:flex-1">
+          <div className="relative flex-1">
             <input
               type="text"
               placeholder="Buscar por Cliente ou Equipamento..."
-              className="pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white border-gray-600 placeholder-gray-400"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white border-gray-600 placeholder-gray-400 text-sm sm:text-base"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           </div>
           <select
-            className="py-2 px-4 border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white border-gray-600"
+            className="py-2 px-4 border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white border-gray-600 text-sm sm:text-base"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
@@ -155,24 +155,25 @@ export default function OrdemDeServico() {
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full sm:w-auto flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition whitespace-nowrap"
         >
           <Plus size={20} className="mr-2" />
           Nova OS
         </button>
       </div>
 
-      <div className="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
-        <table className="min-w-full divide-y divide-gray-700">
+      {/* Versão Desktop - Tabela */}
+      <div className="hidden lg:block bg-gray-800 shadow-lg rounded-lg overflow-x-auto border border-gray-700">
+        <table className="w-full divide-y divide-gray-700">
           <thead className="bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">OS ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Equipamento</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Valor Estimado</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Recebimento</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Ações</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">OS ID</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Equipamento</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Valor Estimado</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Recebimento</th>
+              <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Ações</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -181,54 +182,126 @@ export default function OrdemDeServico() {
                 const statusInfo = OS_STATUS.find(s => s.value === order.status) || { label: order.status, color: 'bg-gray-400' };
                 return (
                   <tr key={order.id} className="hover:bg-gray-700 transition duration-150">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{order.id.substring(0, 8)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{order.cliente_nome}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{order.equipamento}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{formatBRL(order.valor_total)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{order.id.substring(0, 8)}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">{order.cliente_nome}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">{order.equipamento}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">{formatBRL(order.valor_total)}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-white ${statusInfo.color}`}>
                         {statusInfo.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {new Date(order.data_recebimento).toLocaleDateString('pt-BR')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                       <button
                         onClick={() => { setEditingOrder(order); setIsEditModalOpen(true); }}
-                        className="text-indigo-400 hover:text-indigo-300 mr-3"
+                        className="text-indigo-400 hover:text-indigo-300 inline-block"
                         title="Editar"
                       >
                         <Edit size={18} />
                       </button>
                       <button
                         onClick={() => handleDeleteOrder(order.id)}
-                        className="text-red-400 hover:text-red-300"
+                        className="text-red-400 hover:text-red-300 inline-block"
                         title="Excluir"
                       >
                         <Trash2 size={18} />
                       </button>
-                      {/* Exemplo de menu de atualização de status (simplificado) */}
-                      <select
-                        className="ml-3 py-1 px-2 border rounded-lg text-sm bg-gray-700 text-white border-gray-600"
-                        onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                        value={order.status}
-                      >
-                        {OS_STATUS.map(status => (
-                          <option key={status.value} value={status.value}>{status.label}</option>
-                        ))}
-                      </select>
                     </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="7" className="px-6 py-4 text-center text-gray-400 bg-gray-800">Nenhuma Ordem de Serviço encontrada.</td>
+                <td colSpan="7" className="px-4 sm:px-6 py-4 text-center text-gray-400 bg-gray-800">Nenhuma Ordem de Serviço encontrada.</td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Versão Mobile - Cards */}
+      <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {filteredOrders.length > 0 ? (
+          filteredOrders.map((order) => {
+            const statusInfo = OS_STATUS.find(s => s.value === order.status) || { label: order.status, color: 'bg-gray-400' };
+            return (
+              <div key={order.id} className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-lg hover:shadow-xl transition">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase">OS ID</p>
+                      <p className="font-semibold text-white text-sm">{order.id.substring(0, 8)}</p>
+                    </div>
+                    <span className={`px-2 py-1 text-xs leading-5 font-semibold rounded-full text-white ${statusInfo.color}`}>
+                      {statusInfo.label}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase">Cliente</p>
+                    <p className="text-sm text-gray-300">{order.cliente_nome}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase">Equipamento</p>
+                    <p className="text-sm text-gray-300">{order.equipamento}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase">Valor Estimado</p>
+                    <p className="text-sm text-gray-300">{formatBRL(order.valor_total)}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase">Recebimento</p>
+                    <p className="text-sm text-gray-300">
+                      {new Date(order.data_recebimento).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase mb-2">Atualizar Status</p>
+                    <select
+                      className="w-full py-1 px-2 border rounded-lg text-xs bg-gray-700 text-white border-gray-600"
+                      onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                      value={order.status}
+                    >
+                      {OS_STATUS.map(status => (
+                        <option key={status.value} value={status.value}>{status.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex gap-2 pt-3 border-t border-gray-700">
+                    <button
+                      onClick={() => { setEditingOrder(order); setIsEditModalOpen(true); }}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-2 px-2 rounded transition flex items-center justify-center gap-1"
+                      title="Editar"
+                    >
+                      <Edit size={16} />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteOrder(order.id)}
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs py-2 px-2 rounded transition flex items-center justify-center gap-1"
+                      title="Excluir"
+                    >
+                      <Trash2 size={16} />
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="col-span-full text-center text-gray-400 py-8 bg-gray-800 rounded-lg border border-gray-700">
+            Nenhuma Ordem de Serviço encontrada.
+          </div>
+        )}
       </div>
 
       {/* Modal de Adicionar OS */}

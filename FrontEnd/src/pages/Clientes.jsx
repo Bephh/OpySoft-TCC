@@ -113,18 +113,18 @@ export default function Clientes() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-white mb-6 flex items-center">
+    <div className="p-2 sm:p-6 w-full">
+      <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 flex items-center">
         <Users className="mr-3" size={28} />
         Gestão de Clientes
       </h1>
 
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative">
+      <div className="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center mb-6">
+        <div className="relative w-full sm:w-auto">
             <input
               type="text"
               placeholder="Buscar por Nome, CPF/CNPJ ou Email..."
-              className="pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white border-gray-600 placeholder-gray-400"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white border-gray-600 placeholder-gray-400 text-sm sm:text-base"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -132,56 +132,57 @@ export default function Clientes() {
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full sm:w-auto flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition whitespace-nowrap"
         >
           <Plus size={20} className="mr-2" />
           Novo Cliente
         </button>
       </div>
 
-      <div className="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
-        <table className="min-w-full divide-y divide-gray-700">
+      {/* Versão Desktop - Tabela */}
+      <div className="hidden lg:block bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
+        <table className="w-full divide-y divide-gray-700">
           <thead className="bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Nome</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Documento</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Telefone</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Recorrente</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Ações</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Nome</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Documento</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Telefone</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Recorrente</th>
+              <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Ações</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
             {filteredClients.length > 0 ? (
               filteredClients.map((client) => (
                 <tr key={client.id} className="hover:bg-gray-700 transition duration-150">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{client.nome}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{formatDocument(client.documento)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{client.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{client.telefone}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{client.nome}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">{formatDocument(client.documento)}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">{client.email}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-300">{client.telefone}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${client.recorrente ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'}`}>
                       {client.recorrente ? 'Sim' : 'Não'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <button
-                      onClick={() => setSelectedClient(client)} // Abre modal/seção de histórico
-                      className="text-blue-400 hover:text-blue-300 mr-3"
+                      onClick={() => setSelectedClient(client)}
+                      className="text-blue-400 hover:text-blue-300 inline-block"
                       title="Ver Histórico"
                     >
                       <Clock size={18} />
                     </button>
                     <button
                       onClick={() => { setEditingClient(client); setIsEditModalOpen(true); }}
-                      className="text-indigo-400 hover:text-indigo-300 mr-3"
+                      className="text-indigo-400 hover:text-indigo-300 inline-block"
                       title="Editar"
                     >
                       <Edit size={18} />
                     </button>
                     <button
                       onClick={() => handleDeleteClient(client.id)}
-                      className="text-red-400 hover:text-red-300"
+                      className="text-red-400 hover:text-red-300 inline-block"
                       title="Excluir"
                     >
                       <Trash2 size={18} />
@@ -191,11 +192,78 @@ export default function Clientes() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="px-6 py-4 text-center text-gray-400 bg-gray-800">Nenhum cliente encontrado.</td>
+                <td colSpan="6" className="px-4 sm:px-6 py-4 text-center text-gray-400 bg-gray-800">Nenhum cliente encontrado.</td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Versão Mobile - Cards */}
+      <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {filteredClients.length > 0 ? (
+          filteredClients.map((client) => (
+            <div key={client.id} className="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow-lg hover:shadow-xl transition">
+              <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase">Nome</p>
+                    <p className="font-semibold text-white text-sm">{client.nome}</p>
+                  </div>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${client.recorrente ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'}`}>
+                    {client.recorrente ? 'Recorrente' : 'Pontual'}
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-400 uppercase">Documento</p>
+                  <p className="text-sm text-gray-300">{formatDocument(client.documento)}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-400 uppercase">Email</p>
+                  <p className="text-sm text-gray-300 truncate">{client.email}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-400 uppercase">Telefone</p>
+                  <p className="text-sm text-gray-300">{client.telefone}</p>
+                </div>
+
+                <div className="flex gap-2 pt-3 border-t border-gray-700">
+                  <button
+                    onClick={() => setSelectedClient(client)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-2 rounded transition flex items-center justify-center gap-1"
+                    title="Ver Histórico"
+                  >
+                    <Clock size={16} />
+                    Histórico
+                  </button>
+                  <button
+                    onClick={() => { setEditingClient(client); setIsEditModalOpen(true); }}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-2 px-2 rounded transition flex items-center justify-center gap-1"
+                    title="Editar"
+                  >
+                    <Edit size={16} />
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClient(client.id)}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs py-2 px-2 rounded transition flex items-center justify-center gap-1"
+                    title="Excluir"
+                  >
+                    <Trash2 size={16} />
+                    Excluir
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full text-center text-gray-400 py-8 bg-gray-800 rounded-lg border border-gray-700">
+            Nenhum cliente encontrado.
+          </div>
+        )}
       </div>
 
       {/* Modal de Adicionar Cliente */}
@@ -217,19 +285,19 @@ export default function Clientes() {
 
       {/* Seção de Histórico de Atendimentos (Placeholder) */}
       {selectedClient && (
-        <div className="mt-8 p-6 bg-gray-800 shadow-lg rounded-lg border border-gray-700">
-          <h2 className="text-2xl font-bold mb-4 flex items-center text-white">
+        <div className="mt-8 p-4 sm:p-6 bg-gray-800 shadow-lg rounded-lg border border-gray-700">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center text-white">
             <Clock className="mr-2 text-gray-400" size={24} />
             Histórico de Atendimentos de {selectedClient.nome}
           </h2>
-          <p className="text-gray-300">
+          <p className="text-gray-300 text-sm sm:text-base">
             Aqui seria carregado o histórico de Ordens de Serviço e atendimentos do cliente {selectedClient.nome}.
             <br/>
             <strong>ID do Cliente:</strong> {selectedClient.id}
           </p>
           <button
             onClick={() => setSelectedClient(null)}
-            className="mt-4 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+            className="mt-4 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition text-sm"
           >
             Fechar Histórico
           </button>
