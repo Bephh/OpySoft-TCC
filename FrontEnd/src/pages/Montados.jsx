@@ -53,8 +53,8 @@ export default function Montados() {
 
   const filteredPcs = pcsMontados.filter(pc => {
     const nameMatch = pc.name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const profitMarginPercentage = Number(profit) / 100;
-    const suggestedPrice = costPrice / (1 - profitMarginPercentage);
+    const profitMarginPercentage = Number(pc.profitMargin) / 100;
+    const suggestedPrice = pc.costPrice / (1 - profitMarginPercentage);
     const min = parseFloat(minPrice) || 0;
     const max = parseFloat(maxPrice) || Infinity;
     const priceMatch = suggestedPrice >= min && suggestedPrice <= max;

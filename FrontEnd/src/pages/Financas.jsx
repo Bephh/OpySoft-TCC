@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { DollarSign, TrendingDown, TrendingUp, Edit, Trash2 } from "lucide-react";
 import { useFinancas } from '../hooks/useFinancas';
+import { useRelatorios } from '../hooks/useRelatorios';
+
 import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
 import { useAuth } from '../AuthContext';
@@ -26,7 +28,11 @@ const Card = ({ title, icon, value }) => (
 
 
 export default function Financas() {
-  const { transacoes, loading, erro, summary, adicionarTransacao, deletarTransacao, atualizarTransacao } = useFinancas();
+  const { transacoes, loading: loadingTransacoes, erro: erroTransacoes, summary, adicionarTransacao, deletarTransacao, atualizarTransacao } = useFinancas();
+  const { totalRevenue, totalCost, totalProfit, loading: loadingRelatorios, erro: erroRelatorios } = useRelatorios();
+
+  const loading = loadingTransacoes || loadingRelatorios;
+  const erro = erroTransacoes || erroRelatorios;
   const { currentUser } = useAuth();
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -122,9 +128,9 @@ export default function Financas() {
 
       {/* Cards de Resumo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <Card title="Receita Total" icon={<TrendingUp className="text-green-500" />} value={formatarMoeda(summary.receitaTotal)} />
-        <Card title="Despesas Totais" icon={<TrendingDown className="text-red-500" />} value={formatarMoeda(summary.despesaTotal)} />
-        <Card title="Lucro Líquido" icon={<DollarSign className={summary.lucroLiquido >= 0 ? 'text-green-500' : 'text-red-500'} />} value={formatarMoeda(summary.lucroLiquido)} />
+        <Card title="Receita Total" icon={<TrendingUp className="text-green-500" />} value={formatarMoeda(totalRevenue)} />
+        <Card title="Custo Total" icon={<TrendingDown className="text-red-500" />} value={formatarMoeda(totalCost)} />
+        <Card title="Lucro Líquido" icon={<DollarSign className={totalProfit >= 0 ? 'text-green-500' : 'text-red-500'} />} value={formatarMoeda(totalProfit)} />
       </div>
 
       {/* Seção Gráfico e Transações Recentes */}

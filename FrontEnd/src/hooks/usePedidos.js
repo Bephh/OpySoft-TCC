@@ -7,20 +7,20 @@ import { useAuth } from '../AuthContext';
 // FUNÇÕES DE ESTOQUE (UTILITY - Requer Permissão na Regra do Firestore)
 // =================================================================
 const updateEstoqueFromPedido = async (itens, userId, multiplicador) => {
-    // CORREÇÃO: Recebe 'components' do pedido.
+
     if (!itens || itens.length === 0) return;
 
     const batch = writeBatch(db);
 
     for (const itemPedido of itens) {
-        // CORREÇÃO: O ID do documento do inventário é salvo no campo 'id' do componente do pedido.
+       
         // A quantidade no pedido é salva no campo 'qty'.
         const itemId = itemPedido.id; // ID do documento no inventário
         const quantidade = parseFloat(itemPedido.qty) || 0; // Campo 'qty' do pedido
         
         if (!itemId || quantidade <= 0) continue;
 
-        // CORREÇÃO CRÍTICA: Ajusta o caminho para a coleção 'inventario'
+
         // Consistente com OrderModal.jsx: 'empresas/{userId}/inventario/{itemId}'
         const itemRef = doc(db, "empresas", userId, "inventario", itemId); 
         const changeAmount = quantidade * multiplicador; 
@@ -30,11 +30,11 @@ const updateEstoqueFromPedido = async (itens, userId, multiplicador) => {
         
         // Verificação crítica: Se o item não existe, o batch.update falhará.
         if (itemDoc.exists()) {
-            // CORREÇÃO: Padronizando para 'quantity' como o nome do campo de estoque.
+    
             const currentQtd = itemDoc.data().quantity || 0;
             const newQtd = currentQtd + changeAmount;
             
-            // CORREÇÃO: Se não há estoque mínimo definido, usa 5 como fallback
+
             const estoqueMinimo = itemDoc.data().estoqueMinimo || 5; 
 
             let newStatus = 'Em Estoque';

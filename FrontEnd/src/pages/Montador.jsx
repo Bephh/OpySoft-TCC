@@ -185,19 +185,52 @@ export default function Montador() {
         setIsSaving(true);
         setIsModalOpen(false);
         const itemsToDeduct = finalOrderData.components.map(item => ({ id: item.id, qty: item.qty }));
-        const orderDocData = {
-            clientName: finalOrderData.clientName, total: String(finalOrderData.suggestedPrice),
-            costPrice: String(finalOrderData.costPrice), profitMargin: finalOrderData.profitMargin,
-            status: finalOrderData.status, notes: finalOrderData.notes,
-            dataCriacao: serverTimestamp(),
-        };
-        try {
-            await updateStockTransaction(itemsToDeduct, currentUser.uid, -1);
-            const newOrderRef = doc(collection(db, 'empresas', currentUser.uid, 'pedidos'));
-            await setDoc(newOrderRef, { ...orderDocData, orderId: newOrderRef.id, components: finalOrderData.components });
-            alert(`✅ Pedido para ${finalOrderData.clientName} finalizado e estoque deduzido!`);
-            clearSelection();
-        } catch (error) {
+	        const orderDocData = {
+	            clientName: finalOrderData.clientName, total: String(finalOrderData.suggestedPrice),
+	            costPrice: String(finalOrderData.costPrice), profitMargin: finalOrderData.profitMargin,
+	            status: finalOrderData.status, notes: finalOrderData.notes,
+	            dataCriacao: serverTimestamp(),
+	        };
+	        
+	        const valorTotal = parseFloat(finalOrderData.suggestedPrice) || 0;
+	        const valorCusto = parseFloat(finalOrderData.costPrice) || 0;
+	        // A lógica de lucro será feita no useFinancas.js (Receita - Despesa)
+	
+	        try {
+	            // 1. Deduzir componentes do estoque
+	            await updateStockTransaction(itemsToDeduct, currentUser.uid, -1);
+	            
+	            // 2. Criar o Pedido
+	            const newOrderRef = doc(collection(db, 'empresas', currentUser.uid, 'pedidos'));
+	            await setDoc(newOrderRef, { ...orderDocData, orderId: newOrderRef.id, components: finalOrderData.components });
+	            
+	            // 3. Criar Transação de Receita (Valor Total da Venda)
+	            if (valorTotal > 0) {
+	                await addDoc(collection(db, "transacoes"), {
+	                    userId: currentUser.uid,
+	                    tipo: 'Receita',
+	                    valor: valorTotal,
+	                    descricao: `Faturamento Pedido #${newOrderRef.id.substring(0, 6)} - ${finalOrderData.clientName}`,
+	                    data: serverTimestamp(),
+	                    pedidoId: newOrderRef.id,
+	                });
+	            }
+	            
+	            // 4. Criar Transação de Despesa (Custo)
+	            if (valorCusto > 0) {
+	                await addDoc(collection(db, "transacoes"), {
+	                    userId: currentUser.uid,
+	                    tipo: 'Despesa',
+	                    valor: valorCusto,
+	                    descricao: `Custo de Produção Pedido #${newOrderRef.id.substring(0, 6)}`,
+	                    data: serverTimestamp(),
+	                    pedidoId: newOrderRef.id,
+	                });
+	            }
+	
+	            alert(`✅ Pedido para ${finalOrderData.clientName} finalizado, estoque deduzido e transações financeiras registradas!`);
+	            clearSelection();
+	        } catch (error) {
             console.error("Erro na transação:", error);
             alert(`❌ Falha ao concluir a transação. Detalhes: ${error.message}`);
         } finally {

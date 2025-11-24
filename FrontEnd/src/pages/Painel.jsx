@@ -1,11 +1,12 @@
 import React from 'react';
 import { DollarSign, ShoppingCart, Archive, TrendingUp, TrendingDown } from 'lucide-react';
-import { useDashboardData } from '../hooks/useDashboardData'; // Hook do painel
+import { useDashboardData } from "../hooks/useDashboardData";
+import { useRelatorios } from "../hooks/useRelatorios"; // Hook do painel
 import { formatarMoeda } from '../utils/format';
 
 // Componente Card para os resumos
 const DashboardCard = ({ title, value, icon, className = "", children }) => (
-  // CORREÇÃO: Garantir que o texto dentro do card use as cores do tema
+  
   <div className={`bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg flex flex-col justify-between ${className}`}>
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -18,7 +19,7 @@ const DashboardCard = ({ title, value, icon, className = "", children }) => (
   </div>
 );
 
-// Componente simples de Gráfico (barra/coluna)
+
 const BarChart = ({ data, labels, title, colorClass, isCurrency = false }) => {
   const maxVal = Math.max(...data, 1);
   const formatValue = isCurrency ? (val) => formatarMoeda(val) : (val) => val;
@@ -50,20 +51,26 @@ const BarChart = ({ data, labels, title, colorClass, isCurrency = false }) => {
 
 
 export default function Painel() {
-  const {
-    receitaTotal,
-    variacaoReceita,
-    receitaPorMes,
-    volumePedidosPorMes,
-    novosPedidos,
-    estoqueBaixo,
-    producaoAndamento,
-    loading,
-    erro
-  } = useDashboardData();
+	  const {
+		    variacaoReceita,
+			    receitaPorMes,
+			    volumePedidosPorMes,
+			    novosPedidos,
+			    osEmAberto,
+			    osTotal,
+			    totalClientes,
+			    clientesRecorrentes,
+			    loading: loadingDashboard,
+			    erro: erroDashboard,
+			  } = useDashboardData();
+
+			  const { totalRevenue, totalCost, totalProfit, loading: loadingRelatorios, erro: erroRelatorios } = useRelatorios();
+
+			  const loading = loadingDashboard || loadingRelatorios;
+			  const erro = erroDashboard || erroRelatorios;
 
   if (loading) {
-    // CORREÇÃO: Garantir que a mensagem de carregamento use as cores do tema
+ 
     return <div className="p-6 text-gray-900 dark:text-white text-center">Carregando dados do Painel...</div>;
   }
 
@@ -72,66 +79,70 @@ export default function Painel() {
   const arrowIcon = isPositive ? <TrendingUp size={20} className="text-green-500" /> : <TrendingDown size={20} className="text-red-500" />;
 
   return (
-    // CORREÇÃO: O fundo do Painel é transparente, o fundo principal é definido no Dashboard.jsx
+
     <div className="p-6 bg-transparent text-gray-900 dark:text-white min-h-screen">
       <h1 className="text-3xl font-bold mb-2">Painel</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-8">Bem-vindo de volta, aqui está um resumo de suas operações.</p>
 
       {erro && (
-        // CORREÇÃO: Garantir que a mensagem de erro use as cores do tema
+
         <div className="bg-red-100 dark:bg-red-900 p-4 rounded-lg mb-6 text-red-700 dark:text-red-300">
           ⚠️ **ERRO:** {erro}. Verifique os logs do console.
         </div>
       )}
 
-      {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+	      {/* Cards de Resumo */}
+	      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+	
+		        {/* 1. Lucro Total */}
+		        <DashboardCard
+		          title="Lucro Total"
+		          value={formatarMoeda(totalProfit)}
+		          icon={<DollarSign className="text-green-500" />}
+		          className="aspect-square"
+		        >
+		          <div className={`text-sm flex items-center mt-2 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+		            {arrowIcon}
+		            <span className="ml-1">{variacaoReceita}% do último mês</span>
+		          </div>
+		        </DashboardCard>
+		
+		        {/* 2. Receita Total */}
+		        <DashboardCard
+		          title="Receita Total"
+		          value={formatarMoeda(totalRevenue)}
+		          icon={<TrendingUp className="text-blue-500" />}
+		          className="aspect-square"
+		        >
+		          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">Faturamento Bruto</span>
+		        </DashboardCard>
+		
+		        {/* 3. Custo Total */}
+		        <DashboardCard
+		          title="Custo Total"
+		          value={formatarMoeda(totalCost)}
+		          icon={<TrendingDown className="text-red-500" />}
+		          className="aspect-square"
+		        >
+		          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">Custos de Produção e Despesas</span>
+		        </DashboardCard>
+		
+		        {/* 4. OS em Aberto */}
+		        <DashboardCard
+		          title="OS em Aberto"
+		          value={osEmAberto}
+		          icon={<Archive className="text-orange-500" />}
+		          className="aspect-square"
+		        >
+		          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{osTotal} OSs totais registradas</span>
+		        </DashboardCard>
+	      </div>
 
-        {/* Receita Total */}
-        <DashboardCard
-          title="Receita Total"
-          value={formatarMoeda(receitaTotal)}
-          icon={<DollarSign className="text-blue-500" />}
-        >
-          <div className={`text-sm flex items-center mt-2 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-            {arrowIcon}
-            <span className="ml-1">{variacaoReceita}% do último mês</span>
-          </div>
-        </DashboardCard>
-
-        {/* Novos Pedidos */}
-        <DashboardCard
-          title="Novos Pedidos"
-          value={`+${novosPedidos}`}
-          icon={<ShoppingCart className="text-yellow-500" />}
-        >
-          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{novosPedidos} em processamento</span>
-        </DashboardCard>
-
-        {/* Itens com Estoque Baixo */}
-        <DashboardCard
-          title="Itens com Estoque Baixo"
-          value={estoqueBaixo}
-          icon={<Archive className="text-red-500" />}
-        >
-          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{estoqueBaixo} itens precisam de reposição</span>
-        </DashboardCard>
-
-        {/* Produção em Andamento (Exemplo) */}
-        <DashboardCard
-          title="Produção em Andamento"
-          value={producaoAndamento}
-          icon={<Archive className="text-purple-500" />}
-        >
-          <span className="text-sm text-gray-500 dark:text-gray-400 mt-2">{producaoAndamento} produções ativas</span>
-        </DashboardCard>
-      </div>
-
-      {/* Gráficos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {/* Visão Geral da Receita */}
-        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96">
+	      {/* Gráficos e Listas */}
+	      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+	
+	        {/* Visão Geral da Receita */}
+	        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96 lg:col-span-1">
           <BarChart
             title="Visão Geral da Receita"
             data={receitaPorMes}
@@ -141,8 +152,8 @@ export default function Painel() {
           />
         </div>
 
-        {/* Volume de Pedidos */}
-        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96">
+	        {/* Volume de Pedidos */}
+	        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96 lg:col-span-1">
           <BarChart
             title="Volume de Pedidos"
             data={volumePedidosPorMes}
@@ -151,7 +162,16 @@ export default function Painel() {
             isCurrency={false}
           />
         </div>
-      </div>
+
+	        {/* Total de Clientes */}
+	        <div className="bg-white dark:bg-[#1e293b] p-6 rounded-xl shadow-lg h-96 lg:col-span-1 flex flex-col justify-center items-center">
+	          <div className="text-center">
+	            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Total de Clientes</p>
+	            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{totalClientes}</p>
+	            <p className="text-sm text-green-500">Clientes Recorrentes: {clientesRecorrentes}</p>
+	          </div>
+	        </div>
+	      </div>
     </div>
   );
 }

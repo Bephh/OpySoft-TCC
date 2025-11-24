@@ -1,3 +1,12 @@
+// eu acho que isso nao serve mais pra nada
+// eu acho que isso nao serve mais pra nada
+// eu acho que isso nao serve mais pra nada
+// eu acho que isso nao serve mais pra nada
+// eu acho que isso nao serve mais pra nada
+// eu acho que isso nao serve mais pra nada
+// eu acho que isso nao serve mais pra nada
+
+
 import { useState, useEffect } from 'react';
 import { db } from '../firebase-config';
 import {
@@ -16,7 +25,7 @@ import {
 import { useAuth } from '../AuthContext';
 
 // -----------------------------------------------------------------
-// FUNÇÃO AUXILIAR: ATUALIZAR PEDIDO (CORRIGIDA)
+// FUNÇÃO sei la
 // -----------------------------------------------------------------
 /**
  * Atualiza o campo 'total' de um pedido aninhado.
@@ -26,7 +35,7 @@ const atualizarValorPedido = async (pedidoId, novoValor, userId) => {
         console.warn("AVISO: userId ou pedidoId ausente para atualização do pedido.");
         return;
     }
-    // CORREÇÃO: Usa a coleção 'empresas' para o pedido aninhado.
+
     const pedidoRef = doc(db, 'empresas', userId, 'pedidos', pedidoId);
 
     try {
@@ -97,11 +106,11 @@ export const useFinancas = () => {
             });
 
             setTransacoes(listaTransacoes);
-            setSummary({
-                receitaTotal: receita,
-                despesaTotal: despesa,
-                lucroLiquido: receita - despesa,
-            });
+	            setSummary({
+	                receitaTotal: receita, // Faturamento Bruto
+	                despesaTotal: despesa, // Custo Total + Outras Despesas
+	                lucroLiquido: receita - despesa, // Lucro Líquido
+	            });
             setLoading(false);
             setErro(null);
         }, (error) => {
