@@ -118,7 +118,7 @@ export default function DashBoard() {
       </div>
 
       {/* 2. Conteúdo Principal */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-gray-900 text-white w-full" onClick={(e) => e.stopPropagation()}>
+  <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-gray-900 text-white w-full" onClick={(e) => e.stopPropagation()}>
         {/* Botão de menu para telas mobile - sem texto, apenas ícone */}
         <button
           onClick={(e) => {

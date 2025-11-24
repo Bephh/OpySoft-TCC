@@ -264,7 +264,7 @@ export default function App() {
 
             <header className="absolute top-0 left-0 w-full z-20 px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center font-bold text-sm">O</div>
+                    <img src="/logo.png" alt="Logo" className="w-8 h-8" />
                     <a href="/">
                         <span className="font-bold text-lg text-white">
                             Opy<span className="text-cyan-500">Soft</span>

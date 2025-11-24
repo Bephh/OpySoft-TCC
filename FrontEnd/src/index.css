@@ -10,10 +10,11 @@ html, body {
 
 body {
   background-color: rgb(17, 24, 39); /* bg-gray-900 */
-  /* Evita que o body gere uma segunda barra de rolagem.
-     O aplicativo React deve controlar a rolagem internamente nos containers
-     (por exemplo, o <main> com overflow-y-auto em Dashboard). */
-  overflow: hidden;
+  /* Permite rolagem do documento quando necessário (páginas públicas/landing).
+    Evitamos scroll horizontal e deixamos scroll vertical para o documento e
+    para containers internos quando aplicável. */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #root {
