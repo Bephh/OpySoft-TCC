@@ -32,7 +32,7 @@ export default function Clientes() {
   useEffect(() => {
     if (currentUser) {
       const q = query(
-        collection(db, `users/${currentUser.uid}/clientes`),
+        collection(db, "empresas", currentUser.uid, "clientes"),
         orderBy('nome', 'asc')
       );
 
@@ -63,7 +63,7 @@ export default function Clientes() {
 
   const handleAddClient = async (newClientData) => {
     try {
-      const clientRef = doc(collection(db, `users/${currentUser.uid}/clientes`));
+  const clientRef = doc(collection(db, "empresas", currentUser.uid, "clientes"));
       await setDoc(clientRef, {
         ...newClientData,
         documento: newClientData.documento.replace(/\D/g, ''), // Salva apenas números
@@ -82,7 +82,7 @@ export default function Clientes() {
 
   const handleEditClient = async (id, updatedData) => {
     try {
-      await updateDoc(doc(db, `users/${currentUser.uid}/clientes`, id), {
+  await updateDoc(doc(db, "empresas", currentUser.uid, "clientes", id), {
         ...updatedData,
         documento: updatedData.documento.replace(/\D/g, ''), // Salva apenas números
         tipo: updatedData.documento.replace(/\D/g, '').length === 11 ? 'Pessoa Física' : 'Pessoa Jurídica',
@@ -100,7 +100,7 @@ export default function Clientes() {
   const handleDeleteClient = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir este Cliente? Isso não excluirá Ordens de Serviço associadas.')) {
       try {
-        await deleteDoc(doc(db, `users/${currentUser.uid}/clientes`, id));
+  await deleteDoc(doc(db, "empresas", currentUser.uid, "clientes", id));
       } catch (error) {
         console.error("Erro ao excluir Cliente:", error);
         alert("Falha ao excluir cliente. Verifique o console para detalhes.");

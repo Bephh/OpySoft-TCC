@@ -35,7 +35,7 @@ export default function OrdemDeServico() {
   useEffect(() => {
     if (currentUser) {
       const q = query(
-        collection(db, `users/${currentUser.uid}/ordens_servico`),
+        collection(db, "empresas", currentUser.uid, "ordens_servico"),
         orderBy('data_recebimento', 'desc')
       );
 
@@ -68,7 +68,7 @@ export default function OrdemDeServico() {
 
   const handleAddOrder = async (newOrderData) => {
     try {
-      const osRef = doc(collection(db, `users/${currentUser.uid}/ordens_servico`));
+      const osRef = doc(collection(db, "empresas", currentUser.uid, "ordens_servico"));
       await setDoc(osRef, {
         ...newOrderData,
         data_recebimento: new Date().toISOString(),
@@ -86,7 +86,7 @@ export default function OrdemDeServico() {
 
   const handleEditOrder = async (id, updatedData) => {
     try {
-      await updateDoc(doc(db, `users/${currentUser.uid}/ordens_servico`, id), updatedData);
+      await updateDoc(doc(db, "empresas", currentUser.uid, "ordens_servico", id), updatedData);
       setIsEditModalOpen(false);
       setEditingOrder(null);
       return Promise.resolve();
@@ -100,7 +100,7 @@ export default function OrdemDeServico() {
   const handleDeleteOrder = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir esta Ordem de Serviço?')) {
       try {
-        await deleteDoc(doc(db, `users/${currentUser.uid}/ordens_servico`, id));
+        await deleteDoc(doc(db, "empresas", currentUser.uid, "ordens_servico", id));
       } catch (error) {
         console.error("Erro ao excluir Ordem de Serviço:", error);
         alert("Falha ao excluir OS. Verifique o console para detalhes.");
@@ -110,7 +110,7 @@ export default function OrdemDeServico() {
 
   const handleUpdateStatus = async (id, newStatus) => {
     try {
-      await updateDoc(doc(db, `users/${currentUser.uid}/ordens_servico`, id), {
+      await updateDoc(doc(db, "empresas", currentUser.uid, "ordens_servico", id), {
         status: newStatus,
       });
     } catch (error) {

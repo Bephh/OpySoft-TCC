@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Save, ClipboardList } from 'lucide-react';
+import { db } from '../firebase-config';
+import { collection, query, onSnapshot } from 'firebase/firestore';
+import { useAuth } from '../AuthContext';
 
 export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null }) {
+  const { currentUser } = useAuth();
   const [formData, setFormData] = useState(initialData ? {
     cliente_nome: initialData.cliente_nome || '',
     cliente_contato: initialData.cliente_contato || '',
@@ -18,6 +22,23 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
     valor_total: 0,
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [selectedClientId, setSelectedClientId] = useState(null);
+
+  // Carregar clientes do Firebase
+  useEffect(() => {
+    if (!currentUser) return;
+    const q = query(collection(db, "empresas", currentUser.uid, "clientes"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const clientList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setClients(clientList);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
 
   if (!isOpen) return null;
 
@@ -30,6 +51,22 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
     }
 
     setFormData(prev => ({ ...prev, [name]: finalValue }));
+  };
+
+  const handleClientSelect = (e) => {
+    const clientId = e.target.value;
+    setSelectedClientId(clientId);
+
+    if (clientId) {
+      const selectedClient = clients.find(c => c.id === clientId);
+      if (selectedClient) {
+        setFormData(prev => ({
+          ...prev,
+          cliente_nome: selectedClient.nome,
+          cliente_contato: selectedClient.telefone || selectedClient.email || '',
+        }));
+      }
+    }
   };
 
   const handleSubmit = (e) => {
@@ -57,11 +94,12 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
           setFormData({
             cliente_nome: '',
             cliente_contato: '',
-          equipamento: '',
-          problema_relatado: '',
-          acessorios: '',
-          valor_total: 0,
-        });
+            equipamento: '',
+            problema_relatado: '',
+            acessorios: '',
+            valor_total: 0,
+          });
+          setSelectedClientId(null);
         }
       })
       .catch(() => {
@@ -83,7 +121,25 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
 
         <div className="overflow-y-auto pr-2 custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Cliente */}
+            {/* Selecionar Cliente Cadastrado */}
+            <div>
+              <label htmlFor="cliente_select" className="block text-sm font-semibold text-gray-300 mb-1">Selecionar Cliente *</label>
+              <select
+                id="cliente_select"
+                value={selectedClientId || ''}
+                onChange={handleClientSelect}
+                className="mt-1 block w-full bg-[#1e293b] border border-gray-700 rounded-lg shadow-inner p-3 text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+              >
+                <option value="">-- Selecione um cliente --</option>
+                {clients.map(client => (
+                  <option key={client.id} value={client.id}>
+                    {client.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Cliente - Nome e Contato */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="cliente_nome" className="block text-sm font-semibold text-gray-300 mb-1">Nome do Cliente *</label>
@@ -98,7 +154,7 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
                 />
               </div>
               <div>
-                <label htmlFor="cliente_contato" className="block text-sm font-semibold text-gray-300 mb-1">Contato (Telefone/Email)</label>
+                <label htmlFor="cliente_contato" className="block text-sm font-semibold text-gray-300 mb-1">Contato</label>
                 <input
                   type="text"
                   name="cliente_contato"
@@ -106,6 +162,7 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
                   value={formData.cliente_contato}
                   onChange={handleChange}
                   className="mt-1 block w-full bg-[#1e293b] border border-gray-700 rounded-lg shadow-inner p-3 text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                  placeholder="Telefone ou Email"
                 />
               </div>
             </div>
@@ -165,25 +222,25 @@ export default function AddOSModal({ isOpen, onClose, onAdd, initialData = null 
                 />
               </div>
             </div>
-          
-          <div className="mt-6 flex justify-end space-x-3 border-t border-gray-700/50 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition"
-              disabled={isSaving}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition disabled:bg-blue-400"
-              disabled={isSaving}
-            >
-              <Save size={18} className="mr-2" />
-              {isSaving ? 'Salvando...' : (initialData ? 'Salvar Alterações' : 'Salvar OS')}
-            </button>
-          </div>
+
+            <div className="mt-6 flex justify-end space-x-3 border-t border-gray-700/50 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition"
+                disabled={isSaving}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition disabled:bg-blue-400"
+                disabled={isSaving}
+              >
+                <Save size={18} className="mr-2" />
+                {isSaving ? 'Salvando...' : (initialData ? 'Salvar Alterações' : 'Salvar OS')}
+              </button>
+            </div>
           </form>
         </div>
       </div>
